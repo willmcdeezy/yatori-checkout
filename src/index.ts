@@ -1,0 +1,1 @@
+import './components/yatori-pay'

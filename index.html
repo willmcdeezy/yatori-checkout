@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Yatori Pay Demo</title>
+    <script type="module" src="/src/index.ts"></script>
+  </head>
+  <body>
+    <h1>Test: Yatori Pay</h1>
+    <yatori-pay
+      wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
+      amount="0.02"
+    ></yatori-pay>
+  </body>
+  <script>
+    function onYatoriEvent(e) {
+      console.log("Received payment!", e.detail);
+      // You could now:
+      // - fire off backend webhook
+      // - show a toast
+      // - redirect the user
+    }
+
+    document
+      .querySelector("yatori-pay")
+      .addEventListener("yatori-signed", onYatoriEvent);
+  </script>
+</html>
