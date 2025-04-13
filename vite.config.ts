@@ -2,13 +2,9 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
     root: '.',
+    publicDir: 'public',
     build: {
-        lib: {
-            entry: 'src/components/yatori-pay.ts',
-            name: 'YatoriPay',
-            fileName: 'yatori-pay',
-            formats: ['es'],
-        },
+        outDir: 'dist', // where Vercel will look
+        emptyOutDir: true,
     },
-    publicDir: 'public'
 })
