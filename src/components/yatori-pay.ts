@@ -113,7 +113,7 @@ export class YatoriPay extends LitElement {
   }
 
   setupYatoriWebSocket(walletAddress: string, yidToMatch: string) {
-    const GATE_URL = 'ws://localhost:3001'
+    const GATE_URL = 'wss://yatori-helios-proxy.onrender.com'
     const wsYatori = new WebSocket(GATE_URL)
 
     wsYatori.addEventListener('open', () => {
