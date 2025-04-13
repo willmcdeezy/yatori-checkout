@@ -10,12 +10,16 @@ export class YatoriPay extends LitElement {
   @state() qrCodeData: string = ''
   @state() yid: string = ''
   @state() confirmed = false
+  @state() isMobile = false
+
+  isMobileDevice(): boolean {
+    return /android|iphone|ipad|ipod/i.test(navigator.userAgent)
+  }
 
   static styles = css`
   :host {
-    display: block;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+    display: flex-column;
+ 
     padding: 16px;
     text-align: center;
     max-width: 240px;
@@ -49,9 +53,29 @@ export class YatoriPay extends LitElement {
   .confirmed.show {
     opacity: 1;
   }
+
+.deeplink-btn {
+  background-color: #1c1c1c;
+  color: white;
+  border: 4px solid white;
+  border-radius: 30px;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600; /* semi-bold */
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-top: 16px;
+}
+
+.deeplink-btn:hover {
+  opacity: 0.9;
+}
   `
 
   async firstUpdated() {
+    this.isMobile = this.isMobileDevice()
+
     const generateShortId = (): string => {
       const timestamp = Date.now().toString().slice(-4)
       const random = Math.random().toString(36).substring(2, 6)
@@ -59,7 +83,8 @@ export class YatoriPay extends LitElement {
     }
 
     const encryptData = (text: string): string => {
-      const key = '' // TODO PUBLIC KEY
+      const key = 'y0bii8xi4rglbkryrqh3o' // DO NOT COMMIT THIS!!!!!
+      console.log(key) // TODO PUBLIC KEY
       return btoa(key + text) + '_yatori'
     }
 
@@ -136,11 +161,24 @@ export class YatoriPay extends LitElement {
       <div>Pay ${this.amount} USDC</div>
       <div>To: ${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
 
-      <div class="qr-wrapper ${this.confirmed ? 'fade-out' : ''}">
-        ${this.qrCodeData
-        ? html`<img src="${this.qrCodeData}" alt="Yatori QR Code" />`
-        : html`<p>Loading QR…</p>`}
-      </div>
+      ${this.isMobile
+        ? html`
+            <button
+              class="deeplink-btn"
+              @click=${() => window.location.href = this.qrCodeData}
+            >
+              Yatori Pay
+            </button>
+          `
+        : html`
+            <div class="qr-wrapper ${this.confirmed ? 'fade-out' : ''}">
+              ${this.qrCodeData
+            ? html`<img src="${this.qrCodeData}" alt="Yatori QR Code" />`
+            : html`<p>Loading QR…</p>`}
+            </div>
+          `}
+      
+      
 
       <div class="confirmed ${this.confirmed ? 'show' : ''}">
         ✅ Payment Confirmed
