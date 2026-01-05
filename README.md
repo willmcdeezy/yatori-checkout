@@ -1,4 +1,4 @@
-# yatori-pay
+# yatori-checkout
 
 To install dependencies:
 

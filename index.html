@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Yatori Pay Demo</title>
+    <title>Yatori Checkout Demo</title>
     <script type="module" src="/src/index.ts"></script>
 
     <link
@@ -11,33 +11,36 @@
     <style>
       body {
         font-family: "Inter", sans-serif;
-        background-color: #f9f9f9;
-        color: #1c1c1c;
+        background-color: #0f172a;
+        color: #ffffff;
         display: flex;
         flex-direction: column;
         align-items: center;
         padding: 48px 16px;
         margin: 0;
+        min-height: 100vh;
       }
 
       h1.headline {
         font-size: 40px;
         font-weight: 600;
         margin-bottom: 24px;
+        color: #ffffff;
       }
 
-      yatori-pay {
+      yatori-checkout {
         margin-top: 16px;
+        color: #ffffff;
       }
     </style>
   </head>
 
   <body>
     <h1 class="headline">Yatori Pay</h1>
-    <yatori-pay
+    <yatori-checkout
       wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
-      amount="0.02"
-    ></yatori-pay>
+      amount="0.01"
+    ></yatori-checkout>
   </body>
 
   <script>
@@ -46,7 +49,7 @@
     }
 
     document
-      .querySelector("yatori-pay")
+      .querySelector("yatori-checkout")
       .addEventListener("yatori-signed", onYatoriEvent);
   </script>
 </html>

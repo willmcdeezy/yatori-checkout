@@ -1,1 +1,1 @@
-import './components/yatori-pay'
+import './components/yatori-checkout'
