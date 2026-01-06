@@ -246,8 +246,9 @@ export class YatoriCheckout extends LitElement {
         this.dispatchEvent(
           new CustomEvent('yatori-confirmed', {
             detail: {
+              signature: parsedData.signature,
               status: parsedData.status,
-              yid: parsedData.yid,
+              confirmed: true,
             },
             bubbles: true,
             composed: true,
