@@ -23,10 +23,10 @@ export class YatoriCheckout extends LitElement {
   static styles = css`
   :host {
     display: flex-column;
- 
+    min-width: 280px;
     padding: 16px;
     text-align: center;
-    max-width: 240px;
+
     font-family: sans-serif;
     box-sizing: border-box;
     color: inherit;
@@ -47,8 +47,8 @@ export class YatoriCheckout extends LitElement {
     opacity: 1;
     transition: opacity 0.5s ease;
     background-color: #ffffff;
-    border-radius: 20px;
-    padding: 12px 16px;
+    border-radius: 30px;
+    padding: 12px 12px;
     display: inline-block;
     margin-top: 16px;
   }
@@ -190,8 +190,8 @@ export class YatoriCheckout extends LitElement {
 
     // Generate QR code with Yatori-branded USDC logo using qr-code-styling
     const qrCodeOptions: any = {
-      width: 300,
-      height: 300,
+      width: 200,
+      height: 200,
       data: this.qrUrl,
       image: usdcLogo, // USDC logo bundled inline (not tamperable)
       dotsOptions: {
@@ -203,7 +203,7 @@ export class YatoriCheckout extends LitElement {
       },
       imageOptions: {
         crossOrigin: 'anonymous',
-        margin: 10
+        margin: 5
       },
       cornersSquareOptions: {
         type: 'extra-rounded'
@@ -307,11 +307,12 @@ export class YatoriCheckout extends LitElement {
                   </button>
                 `
               : html`
-                  <div class="qr-wrapper">
+                <div class="qr-wrapper">
                     ${this.qrCodeData
                   ? html`<img src="${this.qrCodeData}" alt="Yatori QR Code" />`
                   : html`<p>Loading QR…</p>`}
                   </div>
+
                 `}
           `}
     `
