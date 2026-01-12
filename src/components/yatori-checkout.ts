@@ -15,9 +15,25 @@ export class YatoriCheckout extends LitElement {
   @state() confirmed = false
   @state() isMobile = false
   @state() connected = false
+  @state() amountError: string = ''
+
+  private hasInitialized = false
 
   isMobileDevice(): boolean {
     return /android|iphone|ipad|ipod/i.test(navigator.userAgent)
+  }
+
+  validateAmount(): boolean {
+    if (this.amount > 9999.99) {
+      this.amountError = 'Amount cannot exceed $9,999.99'
+      return false
+    }
+    if (this.amount <= 0) {
+      this.amountError = 'Amount must be greater than $0'
+      return false
+    }
+    this.amountError = ''
+    return true
   }
 
   static styles = css`
@@ -162,11 +178,61 @@ export class YatoriCheckout extends LitElement {
 .deeplink-btn:active {
   background: linear-gradient(to bottom right, #977DCD, #7DB6C1);
 }
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  gap: 12px;
+}
+
+.error-icon {
+  width: 48px;
+  height: 48px;
+  color: #ef4444;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.error-details {
+  color: #6b7280;
+  font-size: 14px;
+  text-align: center;
+  max-width: 280px;
+}
   `
 
   async firstUpdated() {
     this.isMobile = this.isMobileDevice()
+
+    // Validate amount before generating QR code
+    if (!this.validateAmount()) {
+      return // Don't generate QR if amount is invalid
+    }
+
     await this.generateQRCode()
+    this.hasInitialized = true
+  }
+
+  // Watch for amount changes AFTER initial render
+  updated(changedProperties: Map<string, any>) {
+    // Only regenerate if amount changes AFTER the component has initialized
+    if (this.hasInitialized && changedProperties.has('amount')) {
+      if (!this.validateAmount()) {
+        this.connected = false
+        this.confirmed = false
+      } else if (this.amountError === '') {
+        // If amount becomes valid, regenerate QR
+        this.generateQRCode()
+      }
+    }
   }
 
   async generateQRCode() {
@@ -277,6 +343,23 @@ export class YatoriCheckout extends LitElement {
   }
 
   render() {
+    // Show error if amount is invalid
+    if (this.amountError) {
+      return html`
+        <div class="error-container">
+          <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <circle cx="12" cy="16" r="0.5" fill="currentColor"></circle>
+          </svg>
+          <div class="error-message">${this.amountError}</div>
+          <div class="error-details">
+            Please adjust the payment amount to continue.
+          </div>
+        </div>
+      `
+    }
+
     return html`
       ${!this.connected && !this.confirmed
         ? html`<div class="spinner"></div>`

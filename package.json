@@ -1,7 +1,19 @@
 {
   "name": "yatori-checkout",
-  "module": "index.ts",
+  "version": "0.1.0",
+  "description": "Web components for Yatori checkout",
   "type": "module",
+  "main": "./dist/yatori-checkout.umd.js",
+  "module": "./dist/yatori-checkout.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/yatori-checkout.es.js",
+      "require": "./dist/yatori-checkout.umd.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@types/bun": "latest",
     "@types/qrcode": "^1.5.5",
@@ -9,7 +21,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
