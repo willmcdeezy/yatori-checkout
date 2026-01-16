@@ -40,10 +40,8 @@ export class YatoriCheckout extends LitElement {
   static styles = css`
   :host {
     display: flex-column;
-    min-width: 280px;
-    padding: 16px;
+    padding: 0;
     text-align: center;
-
     font-family: sans-serif;
     box-sizing: border-box;
     color: inherit;
@@ -63,11 +61,12 @@ export class YatoriCheckout extends LitElement {
   .qr-wrapper {
     opacity: 1;
     transition: opacity 0.5s ease;
-    background-color: #ffffff;
-    border-radius: 30px;
-    padding: 16px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 10px;
     display: inline-block;
-    margin-top: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
   .qr-wrapper img {
@@ -78,49 +77,49 @@ export class YatoriCheckout extends LitElement {
   .qr-header {
     font-weight: bold;
     letter-spacing: 0.15em;
-    font-size: 14px;
+    font-size: 10px;
     color: #1c1c1c;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 4px;
   }
 
   .qr-header img {
-    width: 20px;
-    height: 20px;
+    width: 14px;
+    height: 14px;
     margin: 0;
   }
 
   .qr-details {
-    margin-top: 8px;
-    font-size: 12px;
+    margin-top: 6px;
+    font-size: 9px;
     color: #4a5568;
     text-align: center;
-    line-height: 1.4;
+    line-height: 1.3;
   }
 
   .qr-amount {
     font-weight: 600;
     color: #1c1c1c;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 4px;
   }
 
   .qr-amount img {
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
     margin: 0;
   }
 
   .qr-wallet {
     font-family: monospace;
-    font-size: 11px;
+    font-size: 8px;
     color: #6b7280;
   }
 
@@ -304,12 +303,12 @@ export class YatoriCheckout extends LitElement {
 
     this.qrUrl = `https://yatori.io/mobile/yatoriRequest?token=${snakeEater.token}&to=${snakeEater.to}&amount=${snakeEater.amount}&yid=${snakeEater.yid}`
 
-    // Generate QR code with Yatori Blocks logo using qr-code-styling
+    // Generate compact QR code optimized for overlay display
     const qrCodeOptions: any = {
-      width: 200,
-      height: 200,
+      width: 140,
+      height: 140,
       data: this.qrUrl,
-      // Yatori Blocks logo bundled inline (not tamperable)
+      margin: 0,
       dotsOptions: {
         color: '#000000',
         type: 'dots'
@@ -317,7 +316,6 @@ export class YatoriCheckout extends LitElement {
       backgroundOptions: {
         color: '#ffffff'
       },
-
       cornersSquareOptions: {
         type: 'extra-rounded'
       },
