@@ -1,7 +1,8 @@
 import { LitElement, html, css } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import QRCodeStyling from 'qr-code-styling'
-// Import USDC logo - will be bundled inline as base64 (not tamperable)
+// Import Yatori Blocks logo - will be bundled inline as base64 (not tamperable)
+import yatoriLogo from '../assets/yatori-blocks-logo.png'
 import usdcLogo from '../assets/USDC-logo.png'
 
 @customElement('yatori-checkout')
@@ -64,7 +65,7 @@ export class YatoriCheckout extends LitElement {
     transition: opacity 0.5s ease;
     background-color: #ffffff;
     border-radius: 30px;
-    padding: 12px 12px;
+    padding: 16px;
     display: inline-block;
     margin-top: 16px;
   }
@@ -72,6 +73,55 @@ export class YatoriCheckout extends LitElement {
   .qr-wrapper img {
     margin: 0;
     display: block;
+  }
+
+  .qr-header {
+    font-weight: bold;
+    letter-spacing: 0.15em;
+    font-size: 14px;
+    color: #1c1c1c;
+    margin-bottom: 8px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .qr-header img {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+  }
+
+  .qr-details {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #4a5568;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .qr-amount {
+    font-weight: 600;
+    color: #1c1c1c;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .qr-amount img {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+  }
+
+  .qr-wallet {
+    font-family: monospace;
+    font-size: 11px;
+    color: #6b7280;
   }
 
   .qr-wrapper.fade-out {
@@ -254,12 +304,12 @@ export class YatoriCheckout extends LitElement {
 
     this.qrUrl = `https://yatori.io/mobile/yatoriRequest?token=${snakeEater.token}&to=${snakeEater.to}&amount=${snakeEater.amount}&yid=${snakeEater.yid}`
 
-    // Generate QR code with Yatori-branded USDC logo using qr-code-styling
+    // Generate QR code with Yatori Blocks logo using qr-code-styling
     const qrCodeOptions: any = {
       width: 200,
       height: 200,
       data: this.qrUrl,
-      image: usdcLogo, // USDC logo bundled inline (not tamperable)
+      // Yatori Blocks logo bundled inline (not tamperable)
       dotsOptions: {
         color: '#000000',
         type: 'dots'
@@ -267,10 +317,7 @@ export class YatoriCheckout extends LitElement {
       backgroundOptions: {
         color: '#ffffff'
       },
-      imageOptions: {
-        crossOrigin: 'anonymous',
-        margin: 5
-      },
+
       cornersSquareOptions: {
         type: 'extra-rounded'
       },
@@ -391,11 +438,21 @@ export class YatoriCheckout extends LitElement {
                 `
               : html`
                 <div class="qr-wrapper">
-                    ${this.qrCodeData
+                  <div class="qr-header">
+                    <img src="${yatoriLogo}" alt="Yatori Logo" />
+                    YATORI PAY
+                  </div>
+                  ${this.qrCodeData
                   ? html`<img src="${this.qrCodeData}" alt="Yatori QR Code" />`
                   : html`<p>Loading QR…</p>`}
+                  <div class="qr-details">
+                    <div class="qr-amount">
+                      $${this.amount.toFixed(2)}
+                      <img src="${usdcLogo}" alt="USDC" />
+                    </div>
+                    <div class="qr-wallet">${this.wallet.slice(0, 6)}...${this.wallet.slice(-4)}</div>
                   </div>
-
+                </div>
                 `}
           `}
     `
