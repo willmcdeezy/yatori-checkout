@@ -2,6 +2,11 @@
   "name": "yatori-checkout",
   "version": "0.1.0",
   "description": "Web components for Yatori checkout",
+  "license": "MIT",
+  "author": {
+    "name": "willmcdeezy",
+    "email": "will@yatori.io"
+  },
   "type": "module",
   "main": "./dist/yatori-checkout.umd.js",
   "module": "./dist/yatori-checkout.es.js",
