@@ -61,12 +61,12 @@ export class YatoriCheckout extends LitElement {
   .qr-wrapper {
     opacity: 1;
     transition: opacity 0.5s ease;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: #ffffff;
     border-radius: 16px;
     padding: 10px;
     display: inline-block;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
   }
 
   .qr-wrapper img {
@@ -80,11 +80,13 @@ export class YatoriCheckout extends LitElement {
     font-size: 10px;
     color: #1c1c1c;
     margin-bottom: 6px;
+    margin-top: 0;
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 4px;
+    background: #ffffff;
   }
 
   .qr-header img {
@@ -95,10 +97,12 @@ export class YatoriCheckout extends LitElement {
 
   .qr-details {
     margin-top: 6px;
+    margin-bottom: 0;
     font-size: 9px;
     color: #4a5568;
     text-align: center;
     line-height: 1.3;
+    background: #ffffff;
   }
 
   .qr-amount {
@@ -109,12 +113,15 @@ export class YatoriCheckout extends LitElement {
     align-items: center;
     justify-content: center;
     gap: 4px;
+    line-height: 1;
   }
 
   .qr-amount img {
     width: 12px;
     height: 12px;
     margin: 0;
+    display: block;
+    flex-shrink: 0;
   }
 
   .qr-wallet {
@@ -132,17 +139,22 @@ export class YatoriCheckout extends LitElement {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 24px auto;
-    gap: 16px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 160px;
+    min-height: 180px;
+    gap: 12px;
   }
 
   .confirmed svg {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
   }
 
   .confirmed-text {
-    font-size: 18px;
+    font-size: 12px;
     background: linear-gradient(to bottom right, #977DCD, #7DB6C1);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -316,6 +328,9 @@ export class YatoriCheckout extends LitElement {
       backgroundOptions: {
         color: '#ffffff'
       },
+      imageOptions: {
+        margin: 0
+      },
       cornersSquareOptions: {
         type: 'extra-rounded'
       },
@@ -372,6 +387,20 @@ export class YatoriCheckout extends LitElement {
 
         setTimeout(() => {
           this.confirmed = true
+
+          // After 5 seconds of showing the animation, dispatch event to allow parent to hide
+          setTimeout(() => {
+            this.dispatchEvent(
+              new CustomEvent('yatori-animation-complete', {
+                detail: {
+                  signature: parsedData.signature,
+                  status: parsedData.status,
+                },
+                bubbles: true,
+                composed: true,
+              })
+            )
+          }, 5000) // 5 seconds after animation starts
         }, 500)
       }
     })
@@ -448,7 +477,7 @@ export class YatoriCheckout extends LitElement {
                       $${this.amount.toFixed(2)}
                       <img src="${usdcLogo}" alt="USDC" />
                     </div>
-                    <div class="qr-wallet">${this.wallet.slice(0, 6)}...${this.wallet.slice(-4)}</div>
+                    <div class="qr-wallet">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
                   </div>
                 </div>
                 `}
