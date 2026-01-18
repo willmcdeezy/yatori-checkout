@@ -11,7 +11,8 @@
     <style>
       body {
         font-family: "Inter", sans-serif;
-        background-color: #dedede;
+        background: #1a1a1a;
+        min-height: 100vh;
         color: #131313;
         display: flex;
         flex-direction: column;
@@ -20,62 +21,202 @@
         margin: 0;
       }
 
-      h1.headline {
-        font-size: 40px;
-        font-weight: 800;
-        margin-bottom: 24px;
-        color: #202020;
-        letter-spacing: 0.15em;
-      }
-
-      yatori-checkout {
-        margin-top: 16px;
-        color: #3f3f3f;
-      }
-
-      .payment-info {
+      .header {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 24px;
+        gap: 16px;
+        margin-bottom: 32px;
       }
 
-      .payment-amount {
-        font-size: 32px;
+      .header-logo {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+      }
+
+      h1.headline {
+        font-size: 40px;
+        font-weight: 800;
+        margin: 0;
+        color: #ffffff;
+        letter-spacing: 0.15em;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      yatori-checkout {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+        color: #3f3f3f;
+      }
+
+      .pokemon-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 32px;
+        max-width: 1200px;
+        margin-top: 32px;
+      }
+
+      .pokemon-card {
+        position: relative;
+        width: 320px;
+        height: 450px;
+        border-radius: 12px;
+        overflow: hidden;
+        filter: blur(8px);
+        transition: filter 0.3s ease;
+        border: 3px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        padding: 4px;
+        background: white;
+        box-sizing: border-box;
+      }
+
+      .pokemon-card.unlocked {
+        filter: blur(0px);
+      }
+
+      .pokemon-card-wrapper {
+        position: relative;
+        width: 320px;
+        height: 450px;
+      }
+
+      .card-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 16px;
+        box-sizing: border-box;
+        text-align: center;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .charizard {
+        background-image: url('./1.png');
+      }
+
+      .blastoise {
+        background-image: url('./2.png');
+      }
+
+      .venusaur {
+        background-image: url('./3.png');
+      }
+
+      .card-name {
+        font-size: 24px;
+        margin-bottom: 8px;
+        letter-spacing: 0.05em;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        font-weight: 700;
+      }
+
+      .card-price {
+        font-size: 18px;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         font-weight: 600;
-        color: #6b6b6b;
-      }
-
-      .payment-wallet {
-        font-size: 16px;
-        color: #94a3b8;
-        font-family: "Courier New", monospace;
+        background: rgba(0, 0, 0, 0.4);
+        padding: 4px 12px;
+        border-radius: 12px;
       }
     </style>
   </head>
 
   <body>
-    <h1 class="headline">YATORI CHECKOUT</h1>
-    <div class="payment-info">
-      <div class="payment-amount">Pay 0.01 USDC</div>
-      <div class="payment-wallet">
-        To: G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx
+    <div class="header">
+      <img src="./yatori-blocks-logo.png" alt="Yatori Logo" class="header-logo" />
+      <h1 class="headline">YATORI CHECKOUT</h1>
+    </div>
+
+    <div class="pokemon-grid">
+      <!-- Blastoise Card (Left) -->
+      <div class="pokemon-card-wrapper">
+        <div class="pokemon-card blastoise-card" id="blastoise-card">
+          <div class="card-content blastoise">
+            <div class="card-name">BLASTOISE</div>
+            <div class="card-price">$0.01</div>
+          </div>
+        </div>
+        <yatori-checkout
+          wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
+          amount="0.01"
+          id="blastoise-qr"
+        ></yatori-checkout>
+      </div>
+
+      <!-- Charizard Card (Center - Most Expensive) -->
+      <div class="pokemon-card-wrapper">
+        <div class="pokemon-card charizard-card" id="charizard-card">
+          <div class="card-content charizard">
+            <div class="card-name">CHARIZARD</div>
+            <div class="card-price">$0.03</div>
+          </div>
+        </div>
+        <yatori-checkout
+          wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
+          amount="0.03"
+          id="charizard-qr"
+        ></yatori-checkout>
+      </div>
+
+      <!-- Venusaur Card (Right) -->
+      <div class="pokemon-card-wrapper">
+        <div class="pokemon-card venusaur-card" id="venusaur-card">
+          <div class="card-content venusaur">
+            <div class="card-name">VENUSAUR</div>
+            <div class="card-price">$0.02</div>
+          </div>
+        </div>
+        <yatori-checkout
+          wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
+          amount="0.02"
+          id="venusaur-qr"
+        ></yatori-checkout>
       </div>
     </div>
-    <yatori-checkout
-      wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
-      amount="0.01"
-    ></yatori-checkout>
   </body>
 
   <script>
     function onYatoriEvent(e) {
       console.log("Payment confirmed!", e.detail);
+
+      // Find which QR code triggered the event and unlock that card
+      const qrElement = e.target;
+      const cardId = qrElement.id.replace("-qr", "-card");
+      const card = document.getElementById(cardId);
+
+      if (card) {
+        card.classList.add("unlocked");
+        // Wait 5 seconds for animation to play, then hide the QR code
+        setTimeout(() => {
+          qrElement.style.display = "none";
+        }, 5000); // 5 seconds
+      }
     }
 
-    document
-      .querySelector("yatori-checkout")
-      .addEventListener("yatori-confirmed", onYatoriEvent);
+    function onAnimationComplete(e) {
+      console.log("Animation complete, ready to hide", e.detail);
+      // Animation is done, element will be hidden by onYatoriEvent timeout
+    }
+
+    // Add event listeners to all QR components
+    document.querySelectorAll("yatori-checkout").forEach((qr) => {
+      qr.addEventListener("yatori-confirmed", onYatoriEvent);
+      qr.addEventListener("yatori-animation-complete", onAnimationComplete);
+    });
   </script>
 </html>
