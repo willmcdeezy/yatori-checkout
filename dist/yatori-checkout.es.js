@@ -1593,7 +1593,7 @@ let rf = class extends Of {
                   ${this.qrCodeData ? sf`<img src="${this.qrCodeData}" alt="Yatori QR Code" />` : sf`<p>Loading QR…</p>`}
                   <div class="qr-details">
                     <div class="qr-amount">
-                      $${this.amount.toFixed(2)}
+                      $${this.amount}
                       <img src="${sr}" alt="USDC" />
                     </div>
                     <div class="qr-wallet">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>

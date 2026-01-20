@@ -474,7 +474,7 @@ export class YatoriCheckout extends LitElement {
                   : html`<p>Loading QR…</p>`}
                   <div class="qr-details">
                     <div class="qr-amount">
-                      $${this.amount.toFixed(2)}
+                      $${this.amount}
                       <img src="${usdcLogo}" alt="USDC" />
                     </div>
                     <div class="qr-wallet">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>

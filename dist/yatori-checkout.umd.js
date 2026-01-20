@@ -66,7 +66,7 @@ ${new this._window.XMLSerializer().serializeToString(f)}`;return typeof Blob>"u"
                   ${this.qrCodeData?S.html`<img src="${this.qrCodeData}" alt="Yatori QR Code" />`:S.html`<p>Loading QR…</p>`}
                   <div class="qr-details">
                     <div class="qr-amount">
-                      $${this.amount.toFixed(2)}
+                      $${this.amount}
                       <img src="${Ar}" alt="USDC" />
                     </div>
                     <div class="qr-wallet">${this.wallet.slice(0,4)}...${this.wallet.slice(-4)}</div>
