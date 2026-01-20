@@ -17,8 +17,11 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "types"
   ],
+  "types": "./types/index.d.ts",
+  "typings": "./types/index.d.ts",
   "devDependencies": {
     "@types/bun": "latest",
     "@types/qrcode": "^1.5.5",

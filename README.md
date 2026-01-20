@@ -23,8 +23,6 @@ import 'yatori-checkout'
 
 > **Important:** The recipient wallet address must have at least 0.01 USDC already deposited for rent (USDC PDA on Solana).
 
-> **React documentation coming soon!**
-
 ## Vanilla HTML Example
 
 ```html
@@ -97,6 +95,78 @@ function handlePayment(event) {
   // event.detail contains: { signature, status, confirmed }
 }
 </script>
+```
+
+## React Example
+
+```tsx
+import React, { useRef } from 'react'
+import 'yatori-checkout'
+
+function CheckoutPage() {
+  const checkoutRef = useRef<HTMLElement>(null)
+
+  const handlePayment = (event: CustomEvent) => {
+    console.log('Payment confirmed!', event.detail)
+    // event.detail contains: { signature, status, confirmed }
+  }
+
+  React.useEffect(() => {
+    const element = checkoutRef.current
+    if (element) {
+      element.addEventListener('yatori-confirmed', handlePayment as EventListener)
+      return () => {
+        element.removeEventListener('yatori-confirmed', handlePayment as EventListener)
+      }
+    }
+  }, [])
+
+  return (
+    <yatori-checkout
+      ref={checkoutRef}
+      wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
+      amount="9.99"
+    />
+  )
+}
+
+export default CheckoutPage
+```
+
+Or with TypeScript and proper typing:
+
+```tsx
+import React, { useEffect, useRef } from 'react'
+import 'yatori-checkout'
+import type { YatoriCheckoutElement, YatoriConfirmedEventDetail } from 'yatori-checkout'
+
+function CheckoutPage() {
+  const checkoutRef = useRef<YatoriCheckoutElement>(null)
+
+  useEffect(() => {
+    const element = checkoutRef.current
+    if (!element) return
+
+    const handlePayment = (event: CustomEvent<YatoriConfirmedEventDetail>) => {
+      console.log('Payment confirmed!', event.detail)
+    }
+
+    element.addEventListener('yatori-confirmed', handlePayment as EventListener)
+    return () => {
+      element.removeEventListener('yatori-confirmed', handlePayment as EventListener)
+    }
+  }, [])
+
+  return (
+    <yatori-checkout
+      ref={checkoutRef}
+      wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
+      amount="9.99"
+    />
+  )
+}
+
+export default CheckoutPage
 ```
 
 ## Props/Attributes
