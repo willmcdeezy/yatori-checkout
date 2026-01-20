@@ -1692,9 +1692,8 @@ rf.styles = Cf`
   }
 
   .qr-wallet {
-    font-family: monospace;
     font-size: 8px;
-    color: #6b7280;
+    color:rgb(91, 93, 97);
   }
 
   .qr-wrapper.fade-out {
