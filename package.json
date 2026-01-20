@@ -7,6 +7,14 @@
     "name": "willmcdeezy",
     "email": "will@yatori.io"
   },
+  "homepage": "https://yatori.io/yatori-checkout",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/willmcdeezy/yatori-checkout.git"
+  },
+  "bugs": {
+    "url": "https://github.com/willmcdeezy/yatori-checkout/issues"
+  },
   "type": "module",
   "main": "./dist/yatori-checkout.umd.js",
   "module": "./dist/yatori-checkout.es.js",
