@@ -191,7 +191,7 @@ element.addEventListener('yatori-animation-complete', (event) => {
 
 - ✅ QR code generation with Yatori branding
 - ✅ WebSocket payment confirmation
-- ✅ Mobile responsive: On mobile devices, displays "Yatori Pay" button with secure deeplink functionality to YATORI PAY mobile app
+- ✅ Mobile responsive: On mobile devices, displays "Yatori Pay" button with secure deeplink functionality to [YATORI PAY](https://yatori.io/yatori-pay)
 - ✅ Amount validation (max 9999.99)
 - ✅ Beautiful payment complete animation
 - ✅ Works in any framework (Vue, React, vanilla JS, etc.)
