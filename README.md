@@ -101,35 +101,24 @@ function handlePayment(event) {
 
 ## React Example
 ```tsx
-import React, { useRef } from 'react'
-import 'yatori-checkout'
+import "./App.css";
+import { YatoriCheckout } from "yatori-checkout/react";
 
-function CheckoutPage() {
-  const checkoutRef = useRef<HTMLElement>(null)
-
-  const handlePayment = (event: CustomEvent) => {
-    console.log('Payment confirmed!', event.detail)
-    // event.detail contains: { signature, status, confirmed }
-  }
-
-  React.useEffect(() => {
-    const element = checkoutRef.current
-    if (element) {
-      element.addEventListener('yatori-confirmed', handlePayment as EventListener)
-      return () => {
-        element.removeEventListener('yatori-confirmed', handlePayment as EventListener)
-      }
-    }
-  }, [])
-
+function App() {
   return (
-    <yatori-checkout
-      ref={checkoutRef}
-      wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
-      amount={9.99}
-    />
-  )
+    <>
+      <div>
+        <YatoriCheckout
+          wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
+            amount={0.01}
+        />
+      </div>
+    </>
+  );
 }
+
+export default App;
+
 
 export default CheckoutPage
 ```
