@@ -1,35 +1,70 @@
 {
   "name": "yatori-checkout",
-  "version": "0.1.0",
+  "version": "0.1.6",
   "description": "Web components for Yatori checkout",
+  "keywords": [
+    "web-component",
+    "solana",
+    "usdc",
+    "crypto",
+    "blockchain",
+    "checkout",
+    "qr-code"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "willmcdeezy",
+    "email": "will@yatori.io"
+  },
+  "homepage": "https://yatori.io/yatori-checkout",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Yatori-io/yatori-checkout"
+  },
+  "bugs": {
+    "url": "https://github.com/Yatori-io/yatori-checkout/issues"
+  },
   "type": "module",
-  "main": "./dist/yatori-checkout.umd.js",
-  "module": "./dist/yatori-checkout.es.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "exports": {
     ".": {
-      "import": "./dist/yatori-checkout.es.js",
-      "require": "./dist/yatori-checkout.umd.js"
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./react": {
+      "import": "./dist/react.js",
+      "types": "./types/react.d.ts"
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "types"
   ],
+  "types": "./dist/index.d.ts",
+  "typings": "./dist/index.d.ts",
   "devDependencies": {
     "@types/bun": "latest",
     "@types/qrcode": "^1.5.5",
-    "vite": "^6.2.5"
+    "@types/react": "^19.2.9",
+    "@vitejs/plugin-react": "^5.1.2",
+    "react-dom": "^19.2.3",
+    "vite": "^7.3.1",
+    "typescript": "^5.9.3"
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && tsc --declaration --emitDeclarationOnly",
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "react": "^19.2.3",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "lit": "^3.2.1",
+    "qr-code-styling": "^1.6.0",
     "qrcode": "^1.5.4",
-    "qr-code-styling": "^1.6.0"
+    "react": "^19.2.3"
   }
 }

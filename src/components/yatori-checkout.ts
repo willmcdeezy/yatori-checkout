@@ -25,12 +25,20 @@ export class YatoriCheckout extends LitElement {
   }
 
   validateAmount(): boolean {
+    // Check decimal places and amount range
+    const decimalRegex = /^\d+(\.\d{1,2})?$/
+
+    if (!decimalRegex.test(this.amount.toString())) {
+      this.amountError = 'Amount must have no more than two decimal places'
+      return false
+    }
+
     if (this.amount > 9999.99) {
       this.amountError = 'Amount cannot exceed $9,999.99'
       return false
     }
-    if (this.amount <= 0) {
-      this.amountError = 'Amount must be greater than $0'
+    if (this.amount < 0.01) {
+      this.amountError = 'Amount must at least $0.01'
       return false
     }
     this.amountError = ''
@@ -125,9 +133,8 @@ export class YatoriCheckout extends LitElement {
   }
 
   .qr-wallet {
-    font-family: monospace;
     font-size: 8px;
-    color: #6b7280;
+    color:rgb(91, 93, 97);
   }
 
   .qr-wrapper.fade-out {
@@ -275,6 +282,7 @@ export class YatoriCheckout extends LitElement {
 
     // Validate amount before generating QR code
     if (!this.validateAmount()) {
+      console.error('yatori-checkout --> Amount must be between 9999.99 and 0.01 & must only have two decimal places for USD format!')
       return // Don't generate QR if amount is invalid
     }
 
@@ -474,7 +482,7 @@ export class YatoriCheckout extends LitElement {
                   : html`<p>Loading QR…</p>`}
                   <div class="qr-details">
                     <div class="qr-amount">
-                      $${this.amount.toFixed(2)}
+                      $${this.amount}
                       <img src="${usdcLogo}" alt="USDC" />
                     </div>
                     <div class="qr-wallet">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
