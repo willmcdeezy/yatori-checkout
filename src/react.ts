@@ -8,7 +8,7 @@ import type {
 
 interface YatoriCheckoutProps {
     wallet: string;
-    amount: string | number;
+    amount: number;
     onYatoriConfirmed?: (event: CustomEvent<YatoriConfirmedEventDetail>) => void;
     onYatoriAnimationComplete?: (event: CustomEvent<YatoriAnimationCompleteEventDetail>) => void;
 }

@@ -25,6 +25,14 @@ export class YatoriCheckout extends LitElement {
   }
 
   validateAmount(): boolean {
+    // Check decimal places and amount range
+    const decimalRegex = /^\d+(\.\d{1,2})?$/
+
+    if (!decimalRegex.test(this.amount.toString())) {
+      this.amountError = 'Amount must have no more than two decimal places'
+      return false
+    }
+
     if (this.amount > 9999.99) {
       this.amountError = 'Amount cannot exceed $9,999.99'
       return false
@@ -274,6 +282,7 @@ export class YatoriCheckout extends LitElement {
 
     // Validate amount before generating QR code
     if (!this.validateAmount()) {
+      console.error('yatori-checkout --> Amount must be between 9999.99 and 0.01 & must only have two decimal places for USD format!')
       return // Don't generate QR if amount is invalid
     }
 
