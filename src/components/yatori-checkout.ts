@@ -29,8 +29,8 @@ export class YatoriCheckout extends LitElement {
       this.amountError = 'Amount cannot exceed $9,999.99'
       return false
     }
-    if (this.amount <= 0) {
-      this.amountError = 'Amount must be greater than $0'
+    if (this.amount < 0.01) {
+      this.amountError = 'Amount must at least $0.01'
       return false
     }
     this.amountError = ''
