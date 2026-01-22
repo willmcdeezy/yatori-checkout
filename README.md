@@ -191,6 +191,16 @@ element.addEventListener('yatori-confirmed', (event) => {
 })
 ```
 
+### `yatori-animation-complete`
+
+Fired 5 seconds after payment confirmation, when the payment complete animation finishes. This is useful for hiding the component or updating UI after the animation completes.
+```javascript
+element.addEventListener('yatori-animation-complete', (event) => {
+  const { signature, status } = event.detail
+  // Animation is complete, component can be hidden or UI updated
+})
+```
+
 ## Features
 
 - ✅ QR code generation with Yatori branding
