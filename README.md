@@ -118,9 +118,6 @@ function App() {
 }
 
 export default App;
-
-
-export default CheckoutPage
 ```
 
 ## Next.js Example
