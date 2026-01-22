@@ -1,19 +1,16 @@
-# yatori-checkout
+# Yatori Checkout
 
 A web component for seamless USDC stablecoin payments on Solana with QR code checkout and WebSocket confirmation.
 
 ## Installation
-
 ```bash
 npm install yatori-checkout
 ```
 
 ## Quick Start
-
 ```javascript
 import 'yatori-checkout'
 ```
-
 ```html
 <yatori-checkout
   wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
@@ -24,7 +21,6 @@ import 'yatori-checkout'
 > **Important:** The recipient wallet address must have at least 0.01 USDC already deposited for rent (USDC PDA on Solana).
 
 ## Vanilla HTML Example
-
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -47,7 +43,6 @@ import 'yatori-checkout'
     const checkout = document.querySelector('yatori-checkout')
     checkout.addEventListener('yatori-confirmed', (event) => {
       console.log('Payment confirmed!', event.detail)
-      // event.detail contains: { signature, status, confirmed }
       alert('Payment successful!')
     })
   </script>
@@ -58,7 +53,6 @@ import 'yatori-checkout'
 ## Vue.js Example
 
 First, configure Vue to recognize `yatori-checkout` as a custom element in your `vite.config.js`:
-
 ```javascript
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -77,7 +71,6 @@ export default defineConfig({
 ```
 
 Then use it in your component:
-
 ```vue
 <template>
   <yatori-checkout
@@ -98,7 +91,6 @@ function handlePayment(event) {
 ```
 
 ## React Example
-
 ```tsx
 import React, { useRef } from 'react'
 import 'yatori-checkout'
@@ -133,40 +125,42 @@ function CheckoutPage() {
 export default CheckoutPage
 ```
 
-Or with TypeScript and proper typing:
+## Next.js Example
 
+When using in a Next.js application, use dynamic import to ensure client-side rendering:
 ```tsx
-import React, { useEffect, useRef } from 'react'
-import 'yatori-checkout'
-import type { YatoriCheckoutElement, YatoriConfirmedEventDetail } from 'yatori-checkout'
+"use client";
 
-function CheckoutPage() {
-  const checkoutRef = useRef<YatoriCheckoutElement>(null)
+import dynamic from "next/dynamic";
 
-  useEffect(() => {
-    const element = checkoutRef.current
-    if (!element) return
+const YatoriCheckout = dynamic(
+  () => import("yatori-checkout/react").then((mod) => mod.YatoriCheckout),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full flex justify-center items-center h-[300px]">
+        <div className="animate-pulse">
+          <div className="h-10 bg-gray-300 rounded w-48"></div>
+        </div>
+      </div>
+    ),
+  }
+);
 
-    const handlePayment = (event: CustomEvent<YatoriConfirmedEventDetail>) => {
-      console.log('Payment confirmed!', event.detail)
-    }
-
-    element.addEventListener('yatori-confirmed', handlePayment as EventListener)
-    return () => {
-      element.removeEventListener('yatori-confirmed', handlePayment as EventListener)
-    }
-  }, [])
-
+export default function MyYatoriCheckout() {
   return (
-    <yatori-checkout
-      ref={checkoutRef}
+    <YatoriCheckout
       wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
-      amount="9.99"
+      amount={10}
+      onYatoriConfirmed={(event) => {
+        console.log("Payment confirmed", event.detail);
+      }}
+      onYatoriAnimationComplete={(event) => {
+        console.log("Animation complete", event.detail);
+      }}
     />
-  )
+  );
 }
-
-export default CheckoutPage
 ```
 
 ## Props/Attributes
@@ -181,7 +175,6 @@ export default CheckoutPage
 ### `yatori-confirmed`
 
 Fired when payment is confirmed via WebSocket.
-
 ```javascript
 element.addEventListener('yatori-confirmed', (event) => {
   const { signature, status, confirmed } = event.detail

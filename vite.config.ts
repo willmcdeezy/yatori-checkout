@@ -1,26 +1,26 @@
 import { defineConfig } from 'vite'
-import { resolve } from 'path'
+import react from '@vitejs/plugin-react'
+import path from 'path'
 
 export default defineConfig({
+    plugins: [react()],
     build: {
         lib: {
-            entry: resolve(__dirname, 'src/index.ts'),
+            entry: [
+                path.resolve(__dirname, 'src/index.ts'),
+                path.resolve(__dirname, 'src/react.ts')
+            ],
             name: 'YatoriCheckout',
-            fileName: (format) => `yatori-checkout.${format}.js`,
-            formats: ['es', 'umd']
+            formats: ['es']
         },
         rollupOptions: {
-            // Externalize peer dependencies and dependencies that shouldn't be bundled
-            external: ['lit'],
+            external: ['react', 'lit'],
             output: {
                 globals: {
+                    react: 'React',
                     lit: 'Lit'
-                },
-                assetFileNames: 'assets/[name][extname]'
+                }
             }
-        },
-        outDir: 'dist',
-        emptyOutDir: true,
-        assetsInlineLimit: 40960, // Inline assets up to 40KB (ensures logo is inlined as base64)
-    },
+        }
+    }
 })
