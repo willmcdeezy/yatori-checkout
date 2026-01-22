@@ -1,6 +1,15 @@
 # Yatori Checkout
 
-A web component for seamless USDC stablecoin payments on Solana with QR code checkout and WebSocket confirmation.
+[![npm version](https://img.shields.io/npm/v/yatori-checkout.svg)](https://www.npmjs.com/package/yatori-checkout)
+[![License](https://img.shields.io/github/license/willmcdeezy/yatori-checkout)](https://github.com/willmcdeezy/yatori-checkout/blob/main/LICENSE)
+[![Downloads](https://img.shields.io/npm/dm/yatori-checkout.svg)](https://www.npmjs.com/package/yatori-checkout)
+
+
+A web component for seamless USDC stablecoin payments on Solana with QR code checkout and WebSocket confirmation. Learn more at [Yatori Checkout](https://yatori.io/yatori-checkout)
+
+## Screenshots
+
+![Desktop QR Code Checkout](./screenshots/desktop-qr-code.png)
 
 ## Installation
 ```bash

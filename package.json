@@ -1,7 +1,16 @@
 {
   "name": "yatori-checkout",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Web components for Yatori checkout",
+  "keywords": [
+    "web-component",
+    "solana",
+    "usdc",
+    "crypto",
+    "blockchain",
+    "checkout",
+    "qr-code"
+  ],
   "license": "MIT",
   "author": {
     "name": "willmcdeezy",
