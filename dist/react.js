@@ -1409,7 +1409,7 @@ let rf = class extends Ef {
     return /android|iphone|ipad|ipod/i.test(navigator.userAgent);
   }
   validateAmount() {
-    return this.amount > 9999.99 ? (this.amountError = "Amount cannot exceed $9,999.99", !1) : this.amount <= 0 ? (this.amountError = "Amount must be greater than $0", !1) : (this.amountError = "", !0);
+    return this.amount > 9999.99 ? (this.amountError = "Amount cannot exceed $9,999.99", !1) : this.amount < 0.01 ? (this.amountError = "Amount must at least $0.01", !1) : (this.amountError = "", !0);
   }
   async firstUpdated() {
     this.isMobile = this.isMobileDevice(), this.validateAmount() && (await this.generateQRCode(), this.hasInitialized = !0);
