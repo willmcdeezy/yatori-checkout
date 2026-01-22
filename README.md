@@ -126,7 +126,7 @@ function CheckoutPage() {
     <yatori-checkout
       ref={checkoutRef}
       wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
-      amount="9.99"
+      amount={9.99}
     />
   )
 }
@@ -177,7 +177,7 @@ export default function MyYatoriCheckout() {
 | Attribute | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `wallet` | string | Yes | Recipient wallet address (Solana). Must have at least 0.01 USDC already deposited for rent (USDC PDA). |
-| `amount` | string | Yes | Payment amount in USD decimal format (e.g., "9.99", must be between "0.01" and "9999.99") |
+| `amount` | number | Yes | Payment amount in USD decimal format (e.g., 9.99, must be between 0.01 and 9999.99) |
 
 ## Events
 
@@ -211,3 +211,5 @@ MIT
 ## Links
 
 - [Yatori](https://yatori.io)
+
+- [Checkout YouTube Demo](https://www.youtube.com/watch?v=55-TJJdhLAo)
