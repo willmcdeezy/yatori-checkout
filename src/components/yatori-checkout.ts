@@ -1,9 +1,9 @@
 import { LitElement, html, css } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import QRCodeStyling from 'qr-code-styling'
-// Import Yatori Blocks logo - will be bundled inline as base64 (not tamperable)
-import yatoriLogo from '../assets/yatori-blocks-logo.png'
-import usdcLogo from '../assets/USDC-logo.png'
+// Import Yatori icon - will be bundled inline as base64 (not tamperable)
+import yatoriLogo from '../assets/yatori-icon.svg'
+import usdcLogo from '../assets/USDC-token.svg'
 
 @customElement('yatori-checkout')
 export class YatoriCheckout extends LitElement {
@@ -225,18 +225,33 @@ export class YatoriCheckout extends LitElement {
   }
 
 .deeplink-btn {
-  background: linear-gradient(to bottom right, #977DCD, #7DB6C1);
-  color: white;
-  border: none;
+  background: white;
+  color: #1c1c1c;
+  border: 1px solid #000000;
   border-radius: 9999px;
   font-size: 16px;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
-  padding: 12px 24px;
+  letter-spacing: 0.15em;
+  padding: 12px 20px;
+  min-width: 200px;
+  width: auto;
   cursor: pointer;
   transition: all 0.25s ease;
   margin-top: 16px;
-  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.deeplink-btn img {
+  width: 18px;
+  height: 18px;
+  margin: 0;
 }
 
 .deeplink-btn:hover {
@@ -244,7 +259,7 @@ export class YatoriCheckout extends LitElement {
 }
 
 .deeplink-btn:active {
-  background: linear-gradient(to bottom right, #977DCD, #7DB6C1);
+  background: white;
 }
 
 .error-container {
@@ -468,7 +483,8 @@ export class YatoriCheckout extends LitElement {
                     class="deeplink-btn"
                     @click=${() => window.location.href = this.qrUrl}
                   >
-                    Yatori Pay
+                    <img src="${yatoriLogo}" alt="Yatori Logo" />
+                    YATORI PAY
                   </button>
                 `
               : html`
