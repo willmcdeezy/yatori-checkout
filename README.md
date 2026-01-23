@@ -101,37 +101,23 @@ function handlePayment(event) {
 
 ## React Example
 ```tsx
-import React, { useRef } from 'react'
-import 'yatori-checkout'
+import "./App.css";
+import { YatoriCheckout } from "yatori-checkout/react";
 
-function CheckoutPage() {
-  const checkoutRef = useRef<HTMLElement>(null)
-
-  const handlePayment = (event: CustomEvent) => {
-    console.log('Payment confirmed!', event.detail)
-    // event.detail contains: { signature, status, confirmed }
-  }
-
-  React.useEffect(() => {
-    const element = checkoutRef.current
-    if (element) {
-      element.addEventListener('yatori-confirmed', handlePayment as EventListener)
-      return () => {
-        element.removeEventListener('yatori-confirmed', handlePayment as EventListener)
-      }
-    }
-  }, [])
-
+function App() {
   return (
-    <yatori-checkout
-      ref={checkoutRef}
-      wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
-      amount={9.99}
-    />
-  )
+    <>
+      <div>
+        <YatoriCheckout
+          wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
+            amount={0.01}
+        />
+      </div>
+    </>
+  );
 }
 
-export default CheckoutPage
+export default App;
 ```
 
 ## Next.js Example
@@ -191,11 +177,21 @@ element.addEventListener('yatori-confirmed', (event) => {
 })
 ```
 
+### `yatori-animation-complete`
+
+Fired 5 seconds after payment confirmation, when the payment complete animation finishes. This is useful for hiding the component or updating UI after the animation completes.
+```javascript
+element.addEventListener('yatori-animation-complete', (event) => {
+  const { signature, status } = event.detail
+  // Animation is complete, component can be hidden or UI updated
+})
+```
+
 ## Features
 
 - ✅ QR code generation with Yatori branding
 - ✅ WebSocket payment confirmation
-- ✅ Mobile responsive: On mobile devices, displays "Yatori Pay" button with secure deeplink functionality to YATORI PAY mobile app
+- ✅ Mobile responsive: On mobile devices, displays "Yatori Pay" button with secure deeplink functionality to [YATORI PAY](https://yatori.io/yatori-pay)
 - ✅ Amount validation (max 9999.99)
 - ✅ Beautiful payment complete animation
 - ✅ Works in any framework (Vue, React, vanilla JS, etc.)
