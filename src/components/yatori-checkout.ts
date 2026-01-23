@@ -21,6 +21,7 @@ export class YatoriCheckout extends LitElement {
   @state() dialogOpen = false
 
   private hasInitialized = false
+  private wsConnection: WebSocket | null = null
 
   isMobileDevice(): boolean {
     return /android|iphone|ipad|ipod/i.test(navigator.userAgent)
@@ -374,6 +375,11 @@ export class YatoriCheckout extends LitElement {
     await this.generateQRCode()
     this.hasInitialized = true
 
+    // Start WebSocket if QR is directly shown (not using dialog and not mobile)
+    if (!this.useDialog && !this.isMobile) {
+      this.startWebSocketConnection()
+    }
+
     // Add ESC key listener to close dialog
     document.addEventListener('keydown', this.handleKeyDown)
   }
@@ -381,6 +387,12 @@ export class YatoriCheckout extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback()
     document.removeEventListener('keydown', this.handleKeyDown)
+
+    // Close WebSocket connection when component is removed
+    if (this.wsConnection) {
+      this.wsConnection.close()
+      this.wsConnection = null
+    }
   }
 
   private handleKeyDown = (e: KeyboardEvent) => {
@@ -401,6 +413,16 @@ export class YatoriCheckout extends LitElement {
         this.generateQRCode()
       }
     }
+
+    // Start WebSocket when dialog opens
+    if (changedProperties.has('dialogOpen') && this.dialogOpen && !this.isMobile) {
+      this.startWebSocketConnection()
+    }
+
+    // Start WebSocket when QR is directly shown (useDialog=false)
+    if (changedProperties.has('useDialog') && !this.useDialog && !this.isMobile && this.hasInitialized) {
+      this.startWebSocketConnection()
+    }
   }
 
   async generateQRCode() {
@@ -411,7 +433,7 @@ export class YatoriCheckout extends LitElement {
     }
 
     this.yid = generateShortId()
-    console.log('YID:', this.yid)
+    console.log('YATORI YID CREATED')
 
     const snakeEater = {
       token: 'usdcBasic',
@@ -458,12 +480,31 @@ export class YatoriCheckout extends LitElement {
       reader.readAsDataURL(blob)
     }
 
+    // Don't start WebSocket here - wait until QR is visible
+  }
+
+  startWebSocketConnection() {
+    // Only start if not already connected and we have a YID
+    if (this.wsConnection && this.wsConnection.readyState === WebSocket.OPEN) {
+      return // Already connected
+    }
+
+    if (!this.yid) {
+      return // No YID generated yet
+    }
+
     this.setupYatoriWebSocket(this.wallet, this.yid)
   }
 
   setupYatoriWebSocket(walletAddress: string, yidToMatch: string) {
+    // Close existing connection if any
+    if (this.wsConnection) {
+      this.wsConnection.close()
+    }
+
     const GATE_URL = 'wss://zanshin.fly.dev/confirmed'
     const wsYatori = new WebSocket(GATE_URL)
+    this.wsConnection = wsYatori
 
     wsYatori.addEventListener('open', () => {
       this.connected = true
@@ -524,6 +565,7 @@ export class YatoriCheckout extends LitElement {
     wsYatori.addEventListener('close', () => {
       console.log('Disconnected from proxy')
       this.connected = false
+      this.wsConnection = null
     })
   }
 
@@ -569,7 +611,10 @@ export class YatoriCheckout extends LitElement {
               ? html`
                   <button
                     class="deeplink-btn"
-                    @click=${() => window.location.href = this.qrUrl}
+                    @click=${() => {
+                  this.startWebSocketConnection()
+                  window.location.href = this.qrUrl
+                }}
                   >
                     <img src="${yatoriLogo}" alt="Yatori Logo" />
                     YATORI PAY
@@ -579,7 +624,10 @@ export class YatoriCheckout extends LitElement {
                 ? html`
                     <button
                       class="deeplink-btn"
-                      @click=${() => this.dialogOpen = true}
+                      @click=${() => {
+                    this.dialogOpen = true
+                    this.startWebSocketConnection()
+                  }}
                     >
                       <img src="${yatoriLogo}" alt="Yatori Logo" />
                       YATORI PAY
