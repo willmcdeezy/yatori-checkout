@@ -20,6 +20,13 @@ export declare const YatoriCheckout: React.FC<{
     amount: string | number;
 
     /**
+     * When true and not on mobile, displays a "YATORI PAY" button that opens a centered dialog with the QR code.
+     * When false, displays the QR code directly. On mobile devices, always shows the deeplink button regardless of this setting.
+     * @default true
+     */
+    useDialog?: boolean;
+
+    /**
      * Optional CSS class name to apply to the component
      */
     className?: string;

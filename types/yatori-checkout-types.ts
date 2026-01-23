@@ -10,6 +10,12 @@ export interface YatoriCheckoutElement extends HTMLElement {
      * Payment amount in USD decimal format (e.g., "9.99", must be between "0.01" and "9999.99")
      */
     amount: string | number;
+    /**
+     * When true and not on mobile, displays a "YATORI PAY" button that opens a centered dialog with the QR code.
+     * When false, displays the QR code directly. On mobile devices, always shows the deeplink button regardless of this setting.
+     * @default true
+     */
+    useDialog?: boolean;
 }
 
 // Event detail types
@@ -32,6 +38,7 @@ declare global {
                 React.HTMLAttributes<YatoriCheckoutElement> & {
                     wallet: string;
                     amount: string | number;
+                    useDialog?: boolean;
                     onYatoriConfirmed?: (event: CustomEvent<YatoriConfirmedEventDetail>) => void;
                     onYatoriAnimationComplete?: (event: CustomEvent<YatoriAnimationCompleteEventDetail>) => void;
                 },
