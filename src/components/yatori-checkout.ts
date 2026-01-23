@@ -9,6 +9,7 @@ import usdcLogo from '../assets/USDC-token.svg'
 export class YatoriCheckout extends LitElement {
   @property({ type: String }) wallet = ''
   @property({ type: Number }) amount = 0
+  @property({ type: Boolean }) useDialog = true
 
   @state() qrCodeData: string = ''
   @state() qrUrl: string = ''
@@ -17,6 +18,7 @@ export class YatoriCheckout extends LitElement {
   @state() isMobile = false
   @state() connected = false
   @state() amountError: string = ''
+  @state() dialogOpen = false
 
   private hasInitialized = false
 
@@ -262,6 +264,74 @@ export class YatoriCheckout extends LitElement {
   background: white;
 }
 
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.dialog-content {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+  position: relative;
+  animation: slideUp 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.dialog-close-btn {
+  background: #1c1c1c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 24px;
+  cursor: pointer;
+  margin-top: 16px;
+  width: 100%;
+  transition: background 0.2s ease;
+}
+
+.dialog-close-btn:hover {
+  background: #333333;
+}
+
+.dialog-close-btn:active {
+  background: #1c1c1c;
+}
+
 .error-container {
   display: flex;
   flex-direction: column;
@@ -303,6 +373,20 @@ export class YatoriCheckout extends LitElement {
 
     await this.generateQRCode()
     this.hasInitialized = true
+
+    // Add ESC key listener to close dialog
+    document.addEventListener('keydown', this.handleKeyDown)
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback()
+    document.removeEventListener('keydown', this.handleKeyDown)
+  }
+
+  private handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape' && this.dialogOpen) {
+      this.dialogOpen = false
+    }
   }
 
   // Watch for amount changes AFTER initial render
@@ -410,6 +494,10 @@ export class YatoriCheckout extends LitElement {
 
         setTimeout(() => {
           this.confirmed = true
+          // Close dialog if it's open
+          if (this.dialogOpen) {
+            this.dialogOpen = false
+          }
 
           // After 5 seconds of showing the animation, dispatch event to allow parent to hide
           setTimeout(() => {
@@ -487,23 +575,65 @@ export class YatoriCheckout extends LitElement {
                     YATORI PAY
                   </button>
                 `
-              : html`
-                <div class="qr-wrapper">
-                  <div class="qr-header">
-                    <img src="${yatoriLogo}" alt="Yatori Logo" />
-                    YATORI PAY
-                  </div>
-                  ${this.qrCodeData
-                  ? html`<img src="${this.qrCodeData}" alt="Yatori QR Code" />`
-                  : html`<p>Loading QR…</p>`}
-                  <div class="qr-details">
-                    <div class="qr-amount">
-                      $${this.amount}
-                      <img src="${usdcLogo}" alt="USDC" />
+              : this.useDialog
+                ? html`
+                    <button
+                      class="deeplink-btn"
+                      @click=${() => this.dialogOpen = true}
+                    >
+                      <img src="${yatoriLogo}" alt="Yatori Logo" />
+                      YATORI PAY
+                    </button>
+                    ${this.dialogOpen ? html`
+                      <div class="dialog-overlay" @click=${(e: MouseEvent) => {
+                      if (e.target === e.currentTarget) {
+                        this.dialogOpen = false
+                      }
+                    }}>
+                        <div class="dialog-content">
+                          <div class="qr-wrapper">
+                            <div class="qr-header">
+                              <img src="${yatoriLogo}" alt="Yatori Logo" />
+                              YATORI PAY
+                            </div>
+                            ${this.qrCodeData
+                      ? html`<img src="${this.qrCodeData}" alt="Yatori QR Code" />`
+                      : html`<p>Loading QR…</p>`}
+                            <div class="qr-details">
+                              <div class="qr-amount">
+                                $${this.amount}
+                                <img src="${usdcLogo}" alt="USDC" />
+                              </div>
+                              <div class="qr-wallet">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
+                            </div>
+                          </div>
+                          <button
+                            class="dialog-close-btn"
+                            @click=${() => this.dialogOpen = false}
+                          >
+                            Close
+                          </button>
+                        </div>
+                      </div>
+                    ` : ''}
+                  `
+                : html`
+                  <div class="qr-wrapper">
+                    <div class="qr-header">
+                      <img src="${yatoriLogo}" alt="Yatori Logo" />
+                      YATORI PAY
                     </div>
-                    <div class="qr-wallet">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
+                    ${this.qrCodeData
+                    ? html`<img src="${this.qrCodeData}" alt="Yatori QR Code" />`
+                    : html`<p>Loading QR…</p>`}
+                    <div class="qr-details">
+                      <div class="qr-amount">
+                        $${this.amount}
+                        <img src="${usdcLogo}" alt="USDC" />
+                      </div>
+                      <div class="qr-wallet">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
+                    </div>
                   </div>
-                </div>
                 `}
           `}
     `
