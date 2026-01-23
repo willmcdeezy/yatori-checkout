@@ -21,13 +21,39 @@ npm install yatori-checkout
 import 'yatori-checkout'
 ```
 ```html
+<!-- Default: Uses dialog on desktop (button opens modal) -->
 <yatori-checkout
   wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
   amount="9.99"
 ></yatori-checkout>
+
+<!-- Disable dialog: Shows QR code directly on desktop -->
+<yatori-checkout
+  wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
+  amount="9.99"
+  useDialog="false"
+></yatori-checkout>
 ```
 
 > **Important:** The recipient wallet address must have at least 0.01 USDC already deposited for rent (USDC PDA on Solana).
+
+## Dialog Behavior
+
+By default, the component uses a dialog mode on desktop devices:
+
+- **Desktop with `useDialog=true` (default)**: Shows a "YATORI PAY" button. Clicking it opens a centered modal dialog with the QR code and a close button.
+- **Desktop with `useDialog=false`**: Displays the QR code directly without a dialog.
+- **Mobile devices**: Always shows the "YATORI PAY" button with deeplink functionality (dialog setting is ignored).
+
+To disable the dialog and show the QR code directly on desktop, set `useDialog="false"`:
+
+```html
+<yatori-checkout
+  wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
+  amount="9.99"
+  useDialog="false"
+></yatori-checkout>
+```
 
 ## Vanilla HTML Example
 ```html
@@ -160,10 +186,11 @@ export default function MyYatoriCheckout() {
 
 ## Props/Attributes
 
-| Attribute | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `wallet` | string | Yes | Recipient wallet address (Solana). Must have at least 0.01 USDC already deposited for rent (USDC PDA). |
-| `amount` | number | Yes | Payment amount in USD decimal format (e.g., 9.99, must be between 0.01 and 9999.99) |
+| Attribute | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `wallet` | string | Yes | - | Recipient wallet address (Solana). Must have at least 0.01 USDC already deposited for rent (USDC PDA). |
+| `amount` | number | Yes | - | Payment amount in USD decimal format (e.g., 9.99, must be between 0.01 and 9999.99) |
+| `useDialog` | boolean | No | `true` | When `true` and not on mobile, displays a "YATORI PAY" button that opens a centered dialog with the QR code. When `false`, displays the QR code directly. On mobile devices, always shows the deeplink button regardless of this setting. |
 
 ## Events
 
@@ -190,6 +217,8 @@ element.addEventListener('yatori-animation-complete', (event) => {
 ## Features
 
 - ✅ QR code generation with Yatori branding
+- ✅ Dialog mode (default): Desktop users click a button to open a centered modal with QR code
+- ✅ Direct QR display: Option to show QR code directly without dialog (`useDialog="false"`)
 - ✅ WebSocket payment confirmation
 - ✅ Mobile responsive: On mobile devices, displays "Yatori Pay" button with secure deeplink functionality to [YATORI PAY](https://yatori.io/yatori-pay)
 - ✅ Amount validation (max 9999.99)
