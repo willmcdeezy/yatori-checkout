@@ -484,9 +484,14 @@ export class YatoriCheckout extends LitElement {
   }
 
   startWebSocketConnection() {
-    // Only start if not already connected and we have a YID
-    if (this.wsConnection && this.wsConnection.readyState === WebSocket.OPEN) {
-      return // Already connected
+    // Only start if not already connected/connecting and we have a YID
+    if (this.wsConnection) {
+      const state = this.wsConnection.readyState
+      // If already OPEN or CONNECTING, don't create a new connection
+      if (state === WebSocket.OPEN || state === WebSocket.CONNECTING) {
+        return // Already connected or connecting
+      }
+      // If CLOSING or CLOSED, we can create a new one
     }
 
     if (!this.yid) {
@@ -497,9 +502,16 @@ export class YatoriCheckout extends LitElement {
   }
 
   setupYatoriWebSocket(walletAddress: string, yidToMatch: string) {
-    // Close existing connection if any
+    // Close existing connection only if it's not already open/connecting
     if (this.wsConnection) {
-      this.wsConnection.close()
+      const state = this.wsConnection.readyState
+      // Only close if it's not already open or connecting
+      if (state !== WebSocket.OPEN && state !== WebSocket.CONNECTING) {
+        this.wsConnection.close()
+      } else {
+        // Already have a good connection, don't create a new one
+        return
+      }
     }
 
     const GATE_URL = 'wss://zanshin.fly.dev/confirmed'
@@ -522,7 +534,6 @@ export class YatoriCheckout extends LitElement {
             detail: {
               signature: parsedData.signature,
               status: parsedData.status,
-              confirmed: true,
             },
             bubbles: true,
             composed: true,
@@ -587,8 +598,11 @@ export class YatoriCheckout extends LitElement {
       `
     }
 
+    // Show spinner only when useDialog is false and we're loading (not connected, not confirmed, QR not ready)
+    const showSpinner = !this.useDialog && !this.connected && !this.confirmed && !this.qrCodeData
+
     return html`
-      ${!this.connected && !this.confirmed
+      ${showSpinner
         ? html`<div class="spinner"></div>`
         : this.confirmed
           ? html`
@@ -626,7 +640,6 @@ export class YatoriCheckout extends LitElement {
                       class="deeplink-btn"
                       @click=${() => {
                     this.dialogOpen = true
-                    this.startWebSocketConnection()
                   }}
                     >
                       <img src="${yatoriLogo}" alt="Yatori Logo" />

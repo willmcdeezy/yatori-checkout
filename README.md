@@ -120,7 +120,7 @@ import 'yatori-checkout'
 
 function handlePayment(event) {
   console.log('Payment confirmed!', event.detail)
-  // event.detail contains: { signature, status, confirmed }
+  // event.detail contains: { signature, status }
 }
 </script>
 ```
@@ -199,7 +199,7 @@ export default function MyYatoriCheckout() {
 Fired when payment is confirmed via WebSocket.
 ```javascript
 element.addEventListener('yatori-confirmed', (event) => {
-  const { signature, status, confirmed } = event.detail
+  const { signature, status } = event.detail
   // Handle payment confirmation
 })
 ```
