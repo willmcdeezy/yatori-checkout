@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <title>Yatori Checkout Demo</title>
@@ -104,15 +104,15 @@
       }
 
       .charizard {
-        background-image: url('./1.png');
+        background-image: url("./1.png");
       }
 
       .blastoise {
-        background-image: url('./2.png');
+        background-image: url("./2.png");
       }
 
       .venusaur {
-        background-image: url('./3.png');
+        background-image: url("./3.png");
       }
 
       .card-name {
@@ -133,12 +133,30 @@
         padding: 4px 12px;
         border-radius: 12px;
       }
+
+      @media (max-width: 768px) {
+        .pokemon-grid {
+          grid-template-columns: 1fr;
+          gap: 24px;
+          padding: 0 16px;
+        }
+
+        .pokemon-card-wrapper {
+          width: 100%;
+          max-width: 320px;
+          margin: 0 auto;
+        }
+      }
     </style>
   </head>
 
   <body>
     <div class="header">
-      <img src="./yatori-blocks-logo.png" alt="Yatori Logo" class="header-logo" />
+      <img
+        src="./yatori-blocks-logo.png"
+        alt="Yatori Logo"
+        class="header-logo"
+      />
       <h1 class="headline">YATORI CHECKOUT</h1>
     </div>
 
