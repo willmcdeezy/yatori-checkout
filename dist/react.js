@@ -1627,7 +1627,9 @@ let K = class extends Yt {
 };
 K.styles = Ft`
   :host {
-    display: flex-column;
+    display: block;
+    width: 100%;
+    min-height: var(--yp-button-height, 48px);
     padding: 0;
     text-align: center;
     font-family: sans-serif;
@@ -1637,6 +1639,7 @@ K.styles = Ft`
 
   :host > div {
     color: inherit;
+    width: 100%;
   }
 
   img {
@@ -1807,18 +1810,21 @@ K.styles = Ft`
 .deeplink-btn {
   background: white;
   color: #1c1c1c;
-  border: 1px solid #000000;
-  border-radius: 9999px;
+  border: var(--yp-button-border-width, 1px) solid var(--yp-button-border-color, black);
+  border-radius: var(--yp-button-border-radius, 0px);
   font-size: 16px;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   letter-spacing: 0.15em;
-  padding: 12px 20px;
+  padding: 10px 20px;
+  width: max(var(--yp-button-width, 100%), 200px);
   min-width: 200px;
-  width: auto;
+  height: max(var(--yp-button-height, 48px), 44px);
+  min-height: 44px;
+  box-sizing: border-box;
   cursor: pointer;
   transition: all 0.25s ease;
-  margin-top: 16px;
+  margin: 0;
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
@@ -1835,7 +1841,7 @@ K.styles = Ft`
 }
 
 .deeplink-btn:hover {
-  opacity: 0.9;
+  background: #f5f5f5;
 }
 
 .deeplink-btn:active {
