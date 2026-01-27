@@ -22,7 +22,6 @@ export interface YatoriCheckoutElement extends HTMLElement {
 export interface YatoriConfirmedEventDetail {
     signature: string;
     status: string;
-    confirmed: boolean;
 }
 
 export interface YatoriAnimationCompleteEventDetail {

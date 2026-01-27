@@ -50,7 +50,9 @@ export class YatoriCheckout extends LitElement {
 
   static styles = css`
   :host {
-    display: flex-column;
+    display: block;
+    width: 100%;
+    min-height: var(--yp-button-height, 48px);
     padding: 0;
     text-align: center;
     font-family: sans-serif;
@@ -60,6 +62,7 @@ export class YatoriCheckout extends LitElement {
 
   :host > div {
     color: inherit;
+    width: 100%;
   }
 
   img {
@@ -230,18 +233,21 @@ export class YatoriCheckout extends LitElement {
 .deeplink-btn {
   background: white;
   color: #1c1c1c;
-  border: 1px solid #000000;
-  border-radius: 9999px;
+  border: var(--yp-button-border-width, 1px) solid var(--yp-button-border-color, black);
+  border-radius: var(--yp-button-border-radius, 0px);
   font-size: 16px;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   letter-spacing: 0.15em;
-  padding: 12px 20px;
+  padding: 10px 20px;
+  width: max(var(--yp-button-width, 100%), 200px);
   min-width: 200px;
-  width: auto;
+  height: max(var(--yp-button-height, 48px), 44px);
+  min-height: 44px;
+  box-sizing: border-box;
   cursor: pointer;
   transition: all 0.25s ease;
-  margin-top: 16px;
+  margin: 0;
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
@@ -258,7 +264,7 @@ export class YatoriCheckout extends LitElement {
 }
 
 .deeplink-btn:hover {
-  opacity: 0.9;
+  background: #f5f5f5;
 }
 
 .deeplink-btn:active {
@@ -484,9 +490,14 @@ export class YatoriCheckout extends LitElement {
   }
 
   startWebSocketConnection() {
-    // Only start if not already connected and we have a YID
-    if (this.wsConnection && this.wsConnection.readyState === WebSocket.OPEN) {
-      return // Already connected
+    // Only start if not already connected/connecting and we have a YID
+    if (this.wsConnection) {
+      const state = this.wsConnection.readyState
+      // If already OPEN or CONNECTING, don't create a new connection
+      if (state === WebSocket.OPEN || state === WebSocket.CONNECTING) {
+        return // Already connected or connecting
+      }
+      // If CLOSING or CLOSED, we can create a new one
     }
 
     if (!this.yid) {
@@ -497,9 +508,16 @@ export class YatoriCheckout extends LitElement {
   }
 
   setupYatoriWebSocket(walletAddress: string, yidToMatch: string) {
-    // Close existing connection if any
+    // Close existing connection only if it's not already open/connecting
     if (this.wsConnection) {
-      this.wsConnection.close()
+      const state = this.wsConnection.readyState
+      // Only close if it's not already open or connecting
+      if (state !== WebSocket.OPEN && state !== WebSocket.CONNECTING) {
+        this.wsConnection.close()
+      } else {
+        // Already have a good connection, don't create a new one
+        return
+      }
     }
 
     const GATE_URL = 'wss://zanshin.fly.dev/confirmed'
@@ -522,7 +540,6 @@ export class YatoriCheckout extends LitElement {
             detail: {
               signature: parsedData.signature,
               status: parsedData.status,
-              confirmed: true,
             },
             bubbles: true,
             composed: true,
@@ -587,8 +604,11 @@ export class YatoriCheckout extends LitElement {
       `
     }
 
+    // Show spinner only when useDialog is false and we're loading (not connected, not confirmed, QR not ready)
+    const showSpinner = !this.useDialog && !this.connected && !this.confirmed && !this.qrCodeData
+
     return html`
-      ${!this.connected && !this.confirmed
+      ${showSpinner
         ? html`<div class="spinner"></div>`
         : this.confirmed
           ? html`
@@ -626,7 +646,6 @@ export class YatoriCheckout extends LitElement {
                       class="deeplink-btn"
                       @click=${() => {
                     this.dialogOpen = true
-                    this.startWebSocketConnection()
                   }}
                     >
                       <img src="${yatoriLogo}" alt="Yatori Logo" />

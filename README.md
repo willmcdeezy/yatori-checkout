@@ -9,7 +9,13 @@ A web component for seamless USDC stablecoin payments on Solana with QR code che
 
 ## Screenshots
 
-![Desktop QR Code Checkout](./screenshots/desktop-qr-code.png)
+### React Template Example
+
+![React Template Example 1](./screenshots/react-screenshot-one.png)
+
+![React Template Example 2](./screenshots/react-screenshot-two.png)
+
+*These screenshots show the React template example. Code can be found here: [yatori-checkout-react-template](https://github.com/willmcdeezy/yatori-checkout-react-template)*
 
 ## Installation
 ```bash
@@ -120,7 +126,7 @@ import 'yatori-checkout'
 
 function handlePayment(event) {
   console.log('Payment confirmed!', event.detail)
-  // event.detail contains: { signature, status, confirmed }
+  // event.detail contains: { signature, status }
 }
 </script>
 ```
@@ -199,7 +205,7 @@ export default function MyYatoriCheckout() {
 Fired when payment is confirmed via WebSocket.
 ```javascript
 element.addEventListener('yatori-confirmed', (event) => {
-  const { signature, status, confirmed } = event.detail
+  const { signature, status } = event.detail
   // Handle payment confirmation
 })
 ```
@@ -212,6 +218,52 @@ element.addEventListener('yatori-animation-complete', (event) => {
   const { signature, status } = event.detail
   // Animation is complete, component can be hidden or UI updated
 })
+```
+
+## Shadow DOM CSS Custom Properties
+
+The component uses Shadow DOM, but you can customize the button styling using CSS custom properties (CSS variables) with the `--yp-` prefix. These variables can be set on the `yatori-checkout` element or any parent element.
+
+### Available Custom Properties
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `--yp-button-border-width` | `1px` | Border width of the button |
+| `--yp-button-border-color` | `black` | Border color of the button |
+| `--yp-button-border-radius` | `0px` | Border radius of the button |
+| `--yp-button-height` | `48px` | Height of the button (minimum: 44px) |
+| `--yp-button-width` | `100%` | Width of the button (minimum: 200px) |
+
+> **Note:** The button has minimum size constraints to ensure usability. The minimum width is 200px and minimum height is 44px. Values below these minimums will be automatically clamped.
+
+### Example Usage
+
+```html
+<style>
+  yatori-checkout {
+    --yp-button-border-radius: 2px;
+    --yp-button-border-color: #007bff;
+    --yp-button-border-width: 2px;
+    --yp-button-height: 52px;
+    --yp-button-width: 200px;
+  }
+</style>
+
+<yatori-checkout
+  wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
+  amount="9.99"
+></yatori-checkout>
+```
+
+```css
+/* In your CSS file */
+yatori-checkout {
+  --yp-button-border-radius: 12px;
+  --yp-button-border-color: #333;
+  --yp-button-border-width: 2px;
+  --yp-button-height: 52px;
+  --yp-button-width: 300px;
+}
 ```
 
 ## Features
