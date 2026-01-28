@@ -84,7 +84,7 @@ export class YatoriCheckout extends LitElement {
   }
 
   .qr-wrapper img {
-    margin: 0;
+    margin: 0 auto;
     display: block;
   }
 
@@ -120,6 +120,7 @@ export class YatoriCheckout extends LitElement {
   }
 
   .qr-amount {
+    font-size: 12px;
     font-weight: 600;
     color: #1c1c1c;
     margin-bottom: 3px;
@@ -139,7 +140,7 @@ export class YatoriCheckout extends LitElement {
   }
 
   .qr-wallet {
-    font-size: 8px;
+    font-size: 10px;
     color:rgb(91, 93, 97);
   }
 
@@ -261,14 +262,26 @@ export class YatoriCheckout extends LitElement {
   width: 18px;
   height: 18px;
   margin: 0;
+  display: block;
+  flex-shrink: 0;
 }
 
-.deeplink-btn:hover {
+.deeplink-btn:hover:not(:disabled) {
   background: #f5f5f5;
 }
 
-.deeplink-btn:active {
+.deeplink-btn:active:not(:disabled) {
   background: white;
+}
+
+.deeplink-btn:disabled {
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.deeplink-btn svg {
+  display: block;
+  flex-shrink: 0;
 }
 
 .dialog-overlay {
@@ -610,18 +623,12 @@ export class YatoriCheckout extends LitElement {
     return html`
       ${showSpinner
         ? html`<div class="spinner"></div>`
-        : this.confirmed
+        : this.confirmed && !this.useDialog
           ? html`
             <div class="confirmed">
               <svg viewBox="0 0 100 100" style="shape-rendering: geometricPrecision;">
-                <defs>
-                  <linearGradient id="checkmark-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#977DCD;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#7DB6C1;stop-opacity:1" />
-                  </linearGradient>
-                </defs>
-                <circle cx="50" cy="50" r="40" fill="none" stroke="url(#checkmark-gradient)" stroke-width="4.5" class="animate-draw-circle"/>
-                <path d="M 30 50 L 45 65 L 75 30" fill="none" stroke="url(#checkmark-gradient)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" class="checkmark-path" style="stroke-dasharray: 55; stroke-dashoffset: 55;"/>
+                <circle cx="50" cy="50" r="40" fill="none" stroke="black" stroke-width="4.5" class="animate-draw-circle"/>
+                <path d="M 30 50 L 45 65 L 75 30" fill="none" stroke="black" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" class="checkmark-path" style="stroke-dasharray: 55; stroke-dashoffset: 55;"/>
               </svg>
               <div class="confirmed-text">Payment Complete</div>
             </div>
@@ -644,12 +651,24 @@ export class YatoriCheckout extends LitElement {
                 ? html`
                     <button
                       class="deeplink-btn"
+                      ?disabled=${this.confirmed}
                       @click=${() => {
-                    this.dialogOpen = true
+                    if (!this.confirmed) {
+                      this.dialogOpen = true
+                    }
                   }}
                     >
-                      <img src="${yatoriLogo}" alt="Yatori Logo" />
-                      YATORI PAY
+                      ${this.confirmed
+                    ? html`
+                            <svg viewBox="0 0 100 100" style="width: 24px; height: 24px; shape-rendering: geometricPrecision;">
+                              <circle cx="50" cy="50" r="40" fill="none" stroke="black" stroke-width="4.5" class="animate-draw-circle"/>
+                              <path d="M 30 50 L 45 65 L 75 30" fill="none" stroke="black" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" class="checkmark-path" style="stroke-dasharray: 55; stroke-dashoffset: 55;"/>
+                            </svg>
+                          `
+                    : html`
+                            <img src="${yatoriLogo}" alt="Yatori Logo" />
+                            YATORI PAY
+                          `}
                     </button>
                     ${this.dialogOpen ? html`
                       <div class="dialog-overlay" @click=${(e: MouseEvent) => {
