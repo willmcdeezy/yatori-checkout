@@ -22,9 +22,12 @@ export class YatoriCheckout extends LitElement {
   @state() connected = false
   @state() amountError: string = ''
   @state() dialogOpen = false
+  @state() isConfirming = false
+  @state() confirmingError: string = ''
 
   private hasInitialized = false
   private wsConnection: WebSocket | null = null
+  private confirmingTimeoutId: ReturnType<typeof setTimeout> | null = null
 
   isMobileDevice(): boolean {
     return /android|iphone|ipad|ipod/i.test(navigator.userAgent)
@@ -283,6 +286,41 @@ export class YatoriCheckout extends LitElement {
 
   @keyframes spin {
     to { transform: rotate(360deg); }
+  }
+
+  .confirming-spinner-wrapper {
+    width: 262px;
+    height: 262px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-sizing: border-box;
+  }
+
+  .confirming-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(100, 108, 255, 0.25);
+    border-top-color: #646CFF;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  .confirming-error {
+    width: 262px;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 16px;
+    box-sizing: border-box;
+    color: #646CFF;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
   }
 
 .deeplink-btn {
@@ -575,10 +613,10 @@ export class YatoriCheckout extends LitElement {
       return // No YID generated yet
     }
 
-    this.setupYatoriWebSocket(this.wallet, this.yid)
+    this.setupYatoriWebSocket(this.wallet, this.yid, this.amount)
   }
 
-  setupYatoriWebSocket(walletAddress: string, yidToMatch: string) {
+  setupYatoriWebSocket(walletAddress: string, yidToMatch: string, amount: number) {
     // Close existing connection only if it's not already open/connecting
     if (this.wsConnection) {
       const state = this.wsConnection.readyState
@@ -591,21 +629,43 @@ export class YatoriCheckout extends LitElement {
       }
     }
 
-    const GATE_URL = 'wss://zanshin.fly.dev/confirmed'
+    const GATE_URL = 'ws://localhost:8080/confirmed'
     const wsYatori = new WebSocket(GATE_URL)
     this.wsConnection = wsYatori
 
     wsYatori.addEventListener('open', () => {
       this.connected = true
-      const payload = { address: walletAddress, yid: yidToMatch }
+      const payload = { address: walletAddress, yid: yidToMatch, amount: String(amount) }
       wsYatori.send(JSON.stringify(payload))
     })
 
     wsYatori.addEventListener('message', (data) => {
       const parsedData = JSON.parse(data.data)
 
+      if (parsedData.status === 'confirming') {
+        if (this.confirmingTimeoutId) {
+          clearTimeout(this.confirmingTimeoutId)
+          this.confirmingTimeoutId = null
+        }
+        this.confirmingError = ''
+        this.isConfirming = true
+        this.confirmingTimeoutId = setTimeout(() => {
+          this.confirmingTimeoutId = null
+          this.isConfirming = false
+          this.confirmingError = 'There was an error - check your transaction history'
+        }, 60000)
+      }
+
       if (parsedData.status === 'confirmed') {
-        // Dispatch event to bubble up the confirmation
+        if (this.confirmingTimeoutId) {
+          clearTimeout(this.confirmingTimeoutId)
+          this.confirmingTimeoutId = null
+        }
+        this.confirmingError = ''
+        this.isConfirming = false
+        this.confirmed = true
+        this.dialogOpen = false
+
         this.dispatchEvent(
           new CustomEvent('yatori-confirmed', {
             detail: {
@@ -617,42 +677,41 @@ export class YatoriCheckout extends LitElement {
           })
         )
 
-        // Fade QR out
-        const qrEl = this.renderRoot.querySelector('.qr-wrapper')
-        if (qrEl) qrEl.classList.add('fade-out')
-
         setTimeout(() => {
-          this.confirmed = true
-          // Close dialog if it's open
-          if (this.dialogOpen) {
-            this.dialogOpen = false
-          }
-
-          // When checkmark animation finishes (circle 0.8s + check 0.6s = 1.4s), dispatch event
-          setTimeout(() => {
-            this.dispatchEvent(
-              new CustomEvent('yatori-animation-complete', {
-                detail: {
-                  signature: parsedData.signature,
-                  status: parsedData.status,
-                },
-                bubbles: true,
-                composed: true,
-              })
-            )
-          }, 1400) // 0.8s circle + 0.6s check
-        }, 500)
+          this.dispatchEvent(
+            new CustomEvent('yatori-animation-complete', {
+              detail: {
+                signature: parsedData.signature,
+                status: parsedData.status,
+              },
+              bubbles: true,
+              composed: true,
+            })
+          )
+        }, 1400)
       }
     })
 
     wsYatori.addEventListener('error', (err) => {
       console.error('WebSocket error:', err)
       this.connected = false
+      this.isConfirming = false
+      this.confirmingError = ''
+      if (this.confirmingTimeoutId) {
+        clearTimeout(this.confirmingTimeoutId)
+        this.confirmingTimeoutId = null
+      }
     })
 
     wsYatori.addEventListener('close', () => {
       console.log('Disconnected from proxy')
       this.connected = false
+      this.isConfirming = false
+      this.confirmingError = ''
+      if (this.confirmingTimeoutId) {
+        clearTimeout(this.confirmingTimeoutId)
+        this.confirmingTimeoutId = null
+      }
       this.wsConnection = null
     })
   }
@@ -745,11 +804,16 @@ export class YatoriCheckout extends LitElement {
                           <div class="dialog-amount">$${this.amount} USDC</div>
                           <div class="dialog-qr-row">
                             <div class="dialog-wallet-vertical">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
+                            ${this.isConfirming || this.confirmingError
+                      ? this.confirmingError
+                        ? html`<div class="confirming-spinner-wrapper"><div class="confirming-error">${this.confirmingError}</div></div>`
+                        : html`<div class="confirming-spinner-wrapper"><div class="confirming-spinner"></div></div>`
+                      : html`
                             <div class="qr-wrapper">
                               ${this.qrCodeData
-                        ? html`<img src="${this.qrCodeData}" alt="Yatori QR Code" />`
-                        : html`<p>Loading QR…</p>`}
-                            </div>
+                          ? html`<img src="${this.qrCodeData}" alt="Yatori QR Code" />`
+                          : html`<p>Loading QR…</p>`}
+                            </div>`}
                             <div class="dialog-wallet-vertical-right">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
                           </div>
                           <div class="dialog-wallet-bottom">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
@@ -768,11 +832,16 @@ export class YatoriCheckout extends LitElement {
                     <div class="dialog-amount">$${this.amount} USDC</div>
                     <div class="dialog-qr-row">
                       <div class="dialog-wallet-vertical">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
+                      ${this.isConfirming || this.confirmingError
+                    ? this.confirmingError
+                      ? html`<div class="confirming-spinner-wrapper"><div class="confirming-error">${this.confirmingError}</div></div>`
+                      : html`<div class="confirming-spinner-wrapper"><div class="confirming-spinner"></div></div>`
+                    : html`
                       <div class="qr-wrapper">
                         ${this.qrCodeData
                         ? html`<img src="${this.qrCodeData}" alt="Yatori QR Code" />`
                         : html`<p>Loading QR…</p>`}
-                      </div>
+                      </div>`}
                       <div class="dialog-wallet-vertical-right">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
                     </div>
                     <div class="dialog-wallet-bottom">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
