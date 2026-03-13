@@ -9,13 +9,27 @@ A web component for seamless USDC stablecoin payments on Solana with QR code che
 
 ## Screenshots
 
-### React Template Example
+### Use cases
 
-![React Template Example 1](./screenshots/react-screenshot-one.png)
+**1. Button (default)** — Desktop with `useDialog=true`: the "YATORI PAY" button.
 
-![React Template Example 2](./screenshots/react-screenshot-two.png)
+<img src="./screenshots/one-button.png" alt="Button" width="720" />
 
-*These screenshots show the React template example. Code can be found here: [yatori-checkout-react-template](https://github.com/willmcdeezy/yatori-checkout-react-template)*
+**2. QR code in dialog** — After clicking the button, the modal shows the QR code, amount, and wallet address.
+
+<img src="./screenshots/two-qr-code-dialog-true.png" alt="QR code dialog" width="720" />
+
+**3. Confirmed (dialog)** — Payment confirmed with dialog open: checkmark in the button and dialog closes.
+
+<img src="./screenshots/three-confirmed-dialog-true.png" alt="Confirmed dialog" width="720" />
+
+**4. QR code inline** — Desktop with `useDialog=false`: QR and address shown directly (no button/modal).
+
+<img src="./screenshots/four-qr-code-dialog-false.png" alt="QR code inline" width="720" />
+
+**5. Confirmed (inline)** — Payment confirmed when using inline QR: checkmark and purple wave on amount/addresses.
+
+<img src="./screenshots/five-confirmed-dialog-false.png" alt="Confirmed inline" width="720" />
 
 ## Installation
 ```bash
@@ -203,6 +217,10 @@ export default function MyYatoriCheckout() {
 ### `yatori-confirmed`
 
 Fired when payment is confirmed via WebSocket.
+
+### WebSocket behavior
+
+The component opens a WebSocket when the QR is visible (dialog opened or `useDialog=false`). It sends `address`, `yid`, and **amount** so the server can validate the transaction amount. You only need to pass `wallet` and `amount` as props; the component handles the rest. If the server does not confirm within 60 seconds, the UI shows an error asking the user to check their transaction history.
 ```javascript
 element.addEventListener('yatori-confirmed', (event) => {
   const { signature, status } = event.detail
@@ -212,7 +230,7 @@ element.addEventListener('yatori-confirmed', (event) => {
 
 ### `yatori-animation-complete`
 
-Fired 5 seconds after payment confirmation, when the payment complete animation finishes. This is useful for hiding the component or updating UI after the animation completes.
+Fired when the payment complete (checkmark) animation finishes (~1.4s after confirmation). Use this to hide the component or update UI.
 ```javascript
 element.addEventListener('yatori-animation-complete', (event) => {
   const { signature, status } = event.detail

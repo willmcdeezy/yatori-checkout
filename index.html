@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yatori Checkout – Local Test</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: system-ui, sans-serif;
+        background: #1a1a1a;
+        color: #eee;
+        min-height: 100vh;
+        margin: 0;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      h1 {
+        font-size: 1.25rem;
+        margin-bottom: 8px;
+      }
+      p {
+        color: #999;
+        font-size: 0.875rem;
+        margin: 0 0 24px;
+      }
+      .wrap {
+        width: 100%;
+        max-width: 360px;
+      }
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .toggle-row button {
+        padding: 8px 14px;
+        font-size: 13px;
+        border-radius: 8px;
+        border: 1px solid #444;
+        background: #2a2a2a;
+        color: #eee;
+        cursor: pointer;
+      }
+      .toggle-row button:hover {
+        background: #333;
+      }
+      .toggle-row span {
+        color: #999;
+        font-size: 0.875rem;
+      }
+
+      #log {
+        margin-top: 24px;
+        padding: 12px;
+        background: #2a2a2a;
+        border-radius: 8px;
+        font-size: 12px;
+        font-family: monospace;
+        max-height: 200px;
+        overflow: auto;
+      }
+      #log:empty {
+        display: none;
+      }
+      #log div {
+        margin: 4px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>Yatori Checkout</h1>
+      <p><code> Local test page </code></p>
+
+      <div class="toggle-row">
+        <button type="button" id="toggle-dialog">Toggle useDialog</button>
+        <span id="dialog-state">useDialog: true</span>
+      </div>
+
+      <yatori-checkout
+        id="checkout"
+        wallet="G8RtxPyG2pdrAhrNRMgg7Hia8imCofdCYxvyWiNG14hx"
+        amount="0.01"
+      ></yatori-checkout>
+
+      <div id="log"></div>
+    </div>
+
+    <script type="module" src="/src/index.ts"></script>
+    <script type="module">
+      const checkout = document.getElementById("checkout");
+      const logEl = document.getElementById("log");
+
+      let isOpen = true;
+
+      function toggle() {
+        isOpen = !isOpen;
+        checkout.useDialog = isOpen;
+        document.getElementById("dialog-state").textContent =
+          "useDialog: " + isOpen;
+      }
+
+      checkout.useDialog = isOpen;
+      document.getElementById("dialog-state").textContent =
+        "useDialog: " + isOpen;
+
+      function log(msg, data = "") {
+        const line = document.createElement("div");
+        line.textContent = data ? `${msg} ${JSON.stringify(data)}` : msg;
+        logEl.appendChild(line);
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+
+      checkout.addEventListener("yatori-confirmed", (e) => {
+        log("yatori-confirmed", e.detail);
+      });
+      checkout.addEventListener("yatori-animation-complete", (e) => {
+        log("yatori-animation-complete", e.detail);
+      });
+
+      document
+        .getElementById("toggle-dialog")
+        .addEventListener("click", toggle);
+    </script>
+  </body>
+</html>
