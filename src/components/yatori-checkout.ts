@@ -156,6 +156,21 @@ export class YatoriCheckout extends LitElement {
     gap: 12px;
   }
 
+  .flat-confirmed-inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    min-width: 200px;
+    min-height: 200px;
+  }
+
+  .flat-confirmed-inner svg {
+    width: 48px;
+    height: 48px;
+  }
+
   .confirmed svg {
     width: 48px;
     height: 48px;
@@ -163,10 +178,7 @@ export class YatoriCheckout extends LitElement {
 
   .confirmed-text {
     font-size: 12px;
-    background: linear-gradient(to bottom right, #977DCD, #7DB6C1);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #646CFF;
     font-weight: 600;
   }
 
@@ -623,12 +635,19 @@ export class YatoriCheckout extends LitElement {
         ? html`<div class="spinner"></div>`
         : this.confirmed && !this.useDialog
           ? html`
-            <div class="confirmed">
-              <svg viewBox="0 0 100 100" style="shape-rendering: geometricPrecision;">
-                <circle cx="50" cy="50" r="40" fill="none" stroke="black" stroke-width="4.5" class="animate-draw-circle"/>
-                <path d="M 30 50 L 45 65 L 75 30" fill="none" stroke="black" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" class="checkmark-path" style="stroke-dasharray: 55; stroke-dashoffset: 55;"/>
-              </svg>
-              <div class="confirmed-text">Payment Complete</div>
+            <div class="flat-qr">
+              <div class="dialog-amount">Payment Complete</div>
+              <div class="dialog-qr-row">
+                <div class="dialog-wallet-vertical">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
+                <div class="flat-confirmed-inner">
+                  <svg viewBox="0 0 100 100" style="shape-rendering: geometricPrecision;">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#646CFF" stroke-width="4.5" class="animate-draw-circle"/>
+                    <path d="M 30 50 L 45 65 L 75 30" fill="none" stroke="#646CFF" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" class="checkmark-path" style="stroke-dasharray: 55; stroke-dashoffset: 55;"/>
+                  </svg>
+                </div>
+                <div class="dialog-wallet-vertical-right">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
+              </div>
+              <div class="dialog-wallet-bottom">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
             </div>
           `
           : html`
@@ -659,8 +678,8 @@ export class YatoriCheckout extends LitElement {
                       ${this.confirmed
                     ? html`
                             <svg viewBox="0 0 100 100" style="width: 24px; height: 24px; shape-rendering: geometricPrecision;">
-                              <circle cx="50" cy="50" r="40" fill="none" stroke="black" stroke-width="4.5" class="animate-draw-circle"/>
-                              <path d="M 30 50 L 45 65 L 75 30" fill="none" stroke="black" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" class="checkmark-path" style="stroke-dasharray: 55; stroke-dashoffset: 55;"/>
+                              <circle cx="50" cy="50" r="40" fill="none" stroke="#646CFF" stroke-width="4.5" class="animate-draw-circle"/>
+                              <path d="M 30 50 L 45 65 L 75 30" fill="none" stroke="#646CFF" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" class="checkmark-path" style="stroke-dasharray: 55; stroke-dashoffset: 55;"/>
                             </svg>
                           `
                     : html`
