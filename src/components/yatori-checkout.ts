@@ -95,6 +95,32 @@ export class YatoriCheckout extends LitElement {
     opacity: 0;
   }
 
+  .flat-qr {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  }
+
+  .flat-qr .qr-wrapper {
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .flat-qr .dialog-amount {
+    color: #e8e8e8;
+  }
+
+  .flat-qr .dialog-wallet-vertical,
+  .flat-qr .dialog-wallet-vertical-right,
+  .flat-qr .dialog-wallet-bottom {
+    color: #d4d4d4;
+  }
+
   .dialog-amount {
     text-align: center;
     font-size: 16px;
