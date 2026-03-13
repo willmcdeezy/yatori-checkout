@@ -188,8 +188,10 @@ export class YatoriCheckout extends LitElement {
     justify-content: center;
     align-items: center;
     gap: 12px;
-    min-width: 200px;
-    min-height: 200px;
+    width: 262px;
+    height: 262px;
+    flex-shrink: 0;
+    box-sizing: border-box;
   }
 
   .flat-confirmed-inner svg {
