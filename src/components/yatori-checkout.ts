@@ -8,7 +8,11 @@ import yatoriLogo from '../assets/yatori-icon.svg'
 export class YatoriCheckout extends LitElement {
   @property({ type: String }) wallet = ''
   @property({ type: Number }) amount = 0
-  @property({ type: Boolean }) useDialog = true
+  @property({
+    type: Boolean,
+    converter: { fromAttribute: (value) => value === null ? true : value !== 'false' }
+  })
+  useDialog = true
 
   @state() qrCodeData: string = ''
   @state() qrUrl: string = ''
@@ -120,6 +124,17 @@ export class YatoriCheckout extends LitElement {
   .dialog-wallet-vertical-right {
     writing-mode: vertical-lr;
     text-orientation: mixed;
+    font-family: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: #4a5568;
+    user-select: none;
+  }
+
+  .dialog-wallet-bottom {
+    text-align: center;
+    margin-top: 12px;
+    transform: rotate(180deg);
     font-family: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
     font-size: 10px;
     letter-spacing: 0.1em;
@@ -670,6 +685,7 @@ export class YatoriCheckout extends LitElement {
                             </div>
                             <div class="dialog-wallet-vertical-right">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
                           </div>
+                          <div class="dialog-wallet-bottom">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
                           <button
                             class="dialog-close-btn"
                             @click=${() => this.dialogOpen = false}
@@ -681,10 +697,18 @@ export class YatoriCheckout extends LitElement {
                     ` : ''}
                   `
                 : html`
-                  <div class="qr-wrapper">
-                    ${this.qrCodeData
-                    ? html`<img src="${this.qrCodeData}" alt="Yatori QR Code" />`
-                    : html`<p>Loading QR…</p>`}
+                  <div class="flat-qr">
+                    <div class="dialog-amount">$${this.amount} USDC</div>
+                    <div class="dialog-qr-row">
+                      <div class="dialog-wallet-vertical">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
+                      <div class="qr-wrapper">
+                        ${this.qrCodeData
+                        ? html`<img src="${this.qrCodeData}" alt="Yatori QR Code" />`
+                        : html`<p>Loading QR…</p>`}
+                      </div>
+                      <div class="dialog-wallet-vertical-right">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
+                    </div>
+                    <div class="dialog-wallet-bottom">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
                   </div>
                 `}
           `}
