@@ -537,15 +537,13 @@ export class YatoriCheckout extends LitElement {
   }
 
   async generateQRCode() {
-    // TODO: remove hardcoded yid after dev – use generateShortId() below
-    this.yid = '82628rcf'
-    // const generateShortId = (): string => {
-    //   const timestamp = Date.now().toString().slice(-4)
-    //   const random = Math.random().toString(36).substring(2, 6)
-    //   return `${timestamp}${random}`
-    // }
-    // this.yid = generateShortId()
-    console.log('YATORI YID CREATED (dev hardcoded: 82628rcf)')
+    const generateShortId = (): string => {
+      const timestamp = Date.now().toString().slice(-4)
+      const random = Math.random().toString(36).substring(2, 6)
+      return `${timestamp}${random}`
+    }
+    this.yid = generateShortId()
+    console.log('YATORI YID CREATED')
 
     const snakeEater = {
       token: 'usdcBasic',
@@ -629,7 +627,7 @@ export class YatoriCheckout extends LitElement {
       }
     }
 
-    const GATE_URL = 'ws://localhost:8080/confirmed'
+    const GATE_URL = 'wss://zanshin.fly.dev/confirmed'
     const wsYatori = new WebSocket(GATE_URL)
     this.wsConnection = wsYatori
 
