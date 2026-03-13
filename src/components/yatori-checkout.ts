@@ -3,7 +3,6 @@ import { customElement, property, state } from 'lit/decorators.js'
 import QRCodeStyling from 'qr-code-styling'
 // Import Yatori icon - will be bundled inline as base64 (not tamperable)
 import yatoriLogo from '../assets/yatori-icon.svg'
-import usdcLogo from '../assets/USDC-token.svg'
 
 @customElement('yatori-checkout')
 export class YatoriCheckout extends LitElement {
@@ -88,64 +87,44 @@ export class YatoriCheckout extends LitElement {
     display: block;
   }
 
-  .qr-header {
-    font-weight: bold;
-    letter-spacing: 0.15em;
-    font-size: 10px;
-    color: #1c1c1c;
-    margin-bottom: 6px;
-    margin-top: 0;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    background: #ffffff;
-  }
-
-  .qr-header img {
-    width: 14px;
-    height: 14px;
-    margin: 0;
-  }
-
-  .qr-details {
-    margin-top: 6px;
-    margin-bottom: 0;
-    font-size: 9px;
-    color: #4a5568;
-    text-align: center;
-    line-height: 1.3;
-    background: #ffffff;
-  }
-
-  .qr-amount {
-    font-size: 12px;
-    font-weight: 600;
-    color: #1c1c1c;
-    margin-bottom: 3px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    line-height: 1;
-  }
-
-  .qr-amount img {
-    width: 12px;
-    height: 12px;
-    margin: 0;
-    display: block;
-    flex-shrink: 0;
-  }
-
-  .qr-wallet {
-    font-size: 10px;
-    color:rgb(91, 93, 97);
-  }
-
   .qr-wrapper.fade-out {
     opacity: 0;
+  }
+
+  .dialog-amount {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1c1c1c;
+    margin-bottom: 12px;
+  }
+
+  .dialog-qr-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .dialog-wallet-vertical {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    font-family: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: #4a5568;
+    user-select: none;
+  }
+
+  .dialog-wallet-vertical-right {
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+    font-family: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: #4a5568;
+    user-select: none;
   }
 
   .confirmed {
@@ -445,14 +424,15 @@ export class YatoriCheckout extends LitElement {
   }
 
   async generateQRCode() {
-    const generateShortId = (): string => {
-      const timestamp = Date.now().toString().slice(-4)
-      const random = Math.random().toString(36).substring(2, 6)
-      return `${timestamp}${random}`
-    }
-
-    this.yid = generateShortId()
-    console.log('YATORI YID CREATED')
+    // TODO: remove hardcoded yid after dev – use generateShortId() below
+    this.yid = '82628rcf'
+    // const generateShortId = (): string => {
+    //   const timestamp = Date.now().toString().slice(-4)
+    //   const random = Math.random().toString(36).substring(2, 6)
+    //   return `${timestamp}${random}`
+    // }
+    // this.yid = generateShortId()
+    console.log('YATORI YID CREATED (dev hardcoded: 82628rcf)')
 
     const snakeEater = {
       token: 'usdcBasic',
@@ -463,12 +443,13 @@ export class YatoriCheckout extends LitElement {
 
     this.qrUrl = `https://yatori.io/mobile/yatoriRequest?token=${snakeEater.token}&to=${snakeEater.to}&amount=${snakeEater.amount}&yid=${snakeEater.yid}`
 
-    // Generate compact QR code optimized for overlay display
+    // Generate compact QR code with brand logo in center
     const qrCodeOptions: any = {
-      width: 140,
-      height: 140,
+      width: 250,
+      height: 250,
       data: this.qrUrl,
       margin: 0,
+      image: yatoriLogo,
       dotsOptions: {
         color: '#000000',
         type: 'dots'
@@ -477,7 +458,9 @@ export class YatoriCheckout extends LitElement {
         color: '#ffffff'
       },
       imageOptions: {
-        margin: 0
+        margin: 3,
+        imageSize: 0.17,
+        hideBackgroundDots: true,
       },
       cornersSquareOptions: {
         type: 'extra-rounded'
@@ -570,7 +553,7 @@ export class YatoriCheckout extends LitElement {
             this.dialogOpen = false
           }
 
-          // After 5 seconds of showing the animation, dispatch event to allow parent to hide
+          // When checkmark animation finishes (circle 0.8s + check 0.6s = 1.4s), dispatch event
           setTimeout(() => {
             this.dispatchEvent(
               new CustomEvent('yatori-animation-complete', {
@@ -582,7 +565,7 @@ export class YatoriCheckout extends LitElement {
                 composed: true,
               })
             )
-          }, 5000) // 5 seconds after animation starts
+          }, 1400) // 0.8s circle + 0.6s check
         }, 500)
       }
     })
@@ -677,21 +660,15 @@ export class YatoriCheckout extends LitElement {
                       }
                     }}>
                         <div class="dialog-content">
-                          <div class="qr-wrapper">
-                            <div class="qr-header">
-                              <img src="${yatoriLogo}" alt="Yatori Logo" />
-                              YATORI PAY
+                          <div class="dialog-amount">$${this.amount} USDC</div>
+                          <div class="dialog-qr-row">
+                            <div class="dialog-wallet-vertical">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
+                            <div class="qr-wrapper">
+                              ${this.qrCodeData
+                        ? html`<img src="${this.qrCodeData}" alt="Yatori QR Code" />`
+                        : html`<p>Loading QR…</p>`}
                             </div>
-                            ${this.qrCodeData
-                      ? html`<img src="${this.qrCodeData}" alt="Yatori QR Code" />`
-                      : html`<p>Loading QR…</p>`}
-                            <div class="qr-details">
-                              <div class="qr-amount">
-                                $${this.amount}
-                                <img src="${usdcLogo}" alt="USDC" />
-                              </div>
-                              <div class="qr-wallet">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
-                            </div>
+                            <div class="dialog-wallet-vertical-right">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
                           </div>
                           <button
                             class="dialog-close-btn"
@@ -705,20 +682,9 @@ export class YatoriCheckout extends LitElement {
                   `
                 : html`
                   <div class="qr-wrapper">
-                    <div class="qr-header">
-                      <img src="${yatoriLogo}" alt="Yatori Logo" />
-                      YATORI PAY
-                    </div>
                     ${this.qrCodeData
                     ? html`<img src="${this.qrCodeData}" alt="Yatori QR Code" />`
                     : html`<p>Loading QR…</p>`}
-                    <div class="qr-details">
-                      <div class="qr-amount">
-                        $${this.amount}
-                        <img src="${usdcLogo}" alt="USDC" />
-                      </div>
-                      <div class="qr-wallet">${this.wallet.slice(0, 4)}...${this.wallet.slice(-4)}</div>
-                    </div>
                   </div>
                 `}
           `}
