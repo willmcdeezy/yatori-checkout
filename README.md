@@ -11,25 +11,21 @@ A web component for seamless USDC stablecoin payments on Solana with QR code che
 
 ### Use cases
 
-**1. Button (default)** — Desktop with `useDialog=true`: the "YATORI PAY" button.
+**Button** — Default desktop view with `useDialog=true`: the "YATORI PAY" button.
 
-<img src="./screenshots/one-button.png" alt="Button" width="720" />
+<img src="./screenshots/button.png" alt="Button" width="720" />
 
-**2. QR code in dialog** — After clicking the button, the modal shows the QR code, amount, and wallet address.
+**Dialog** — After clicking the button, the modal shows the QR code, amount, and wallet address.
 
-<img src="./screenshots/two-qr-code-dialog-true.png" alt="QR code dialog" width="720" />
+<img src="./screenshots/dialog.png" alt="QR code dialog" width="720" />
 
-**3. Confirmed (dialog)** — Payment confirmed with dialog open: checkmark in the button and dialog closes.
+**Embedded** — Desktop with `useDialog=false`: QR and address shown directly (no button, no modal).
 
-<img src="./screenshots/three-confirmed-dialog-true.png" alt="Confirmed dialog" width="720" />
+<img src="./screenshots/embeded.png" alt="QR code embedded" width="720" />
 
-**4. QR code inline** — Desktop with `useDialog=false`: QR and address shown directly (no button/modal).
+**Confirmed** — Payment confirmed: checkmark in the button (dialog mode) or checkmark with purple wave (embedded mode).
 
-<img src="./screenshots/four-qr-code-dialog-false.png" alt="QR code inline" width="720" />
-
-**5. Confirmed (inline)** — Payment confirmed when using inline QR: checkmark and purple wave on amount/addresses.
-
-<img src="./screenshots/five-confirmed-dialog-false.png" alt="Confirmed inline" width="720" />
+<img src="./screenshots/confirmed.png" alt="Confirmed" width="720" />
 
 ## Installation
 ```bash

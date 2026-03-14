@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import QRCodeStyling from 'qr-code-styling'
 // Import Yatori icon - will be bundled inline as base64 (not tamperable)
-import yatoriLogo from '../assets/yatori-icon.svg'
+import yatoriLogo from '../assets/yatori-logo-new.png'
 
 @customElement('yatori-checkout')
 export class YatoriCheckout extends LitElement {
@@ -569,8 +569,8 @@ export class YatoriCheckout extends LitElement {
         color: '#ffffff'
       },
       imageOptions: {
-        margin: 3,
-        imageSize: 0.17,
+        margin: 0,
+        imageSize: .5,
         hideBackgroundDots: true,
       },
       cornersSquareOptions: {
